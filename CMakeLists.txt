@@ -29,5 +29,3 @@ set(PROJECT_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 add_subdirectory(libs)
 
 add_subdirectory(benchmark)
-
-

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <filesystem>
 #include <fstream>
 #include <optional>
 #include <vector>
+
+#include "compression_sorts/path.hpp"
 
 namespace CompressionSorts {
 
@@ -17,7 +18,7 @@ std::optional<T> ReadNext(std::ifstream& in) {
 }
 
 template <typename T>
-std::vector<T> ReadData(std::filesystem::path path) {
+std::vector<T> ReadData(Path path) {
     std::ifstream in(path);
     std::vector<T> data;
     while (true) {

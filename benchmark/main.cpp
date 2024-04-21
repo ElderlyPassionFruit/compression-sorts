@@ -7,8 +7,7 @@
 using namespace CompressionSorts;
 
 template <typename T>
-void TestAllBenchmarksWithAlgorithm(std::filesystem::path dir,
-                                    const CompressionSorts::IPermute<T>& algoritm) {
+void TestAllBenchmarksWithAlgorithm(Path dir, const CompressionSorts::IPermute<T>& algoritm) {
     auto paths = GetAllFiles(dir);
     for (const auto& path : paths) {
         auto benchmark_results = TestAlgorithm(path, algoritm, 1);
@@ -18,5 +17,5 @@ void TestAllBenchmarksWithAlgorithm(std::filesystem::path dir,
 
 int main() {
     CompressionSorts::IdentityPermutation<int> identity;
-    TestAllBenchmarksWithAlgorithm<int>("test_data/int", identity);
+    TestAllBenchmarksWithAlgorithm<int>("tests_data/int", identity);
 }

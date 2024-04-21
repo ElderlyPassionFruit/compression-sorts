@@ -2,6 +2,7 @@
 
 #include "compression_sorts/interfaces.hpp"
 #include "compression_sorts/lz4.hpp"
+#include "compression_sorts/path.hpp"
 #include "compression_sorts/permutation.hpp"
 #include "compression_sorts/read_data.hpp"
 #include "compression_sorts/serialize_data.hpp"
@@ -40,8 +41,7 @@ Time CalculateFindPermutationTime(const std::vector<T>& data, const IPermute<T>&
 }
 
 template <typename T>
-BenchmarkResults TestAlgorithm(std::filesystem::path path, const IPermute<T>& algorithm,
-                               const size_t iterations) {
+BenchmarkResults TestAlgorithm(Path path, const IPermute<T>& algorithm, const size_t iterations) {
     auto data = ReadData<T>(path);
     BenchmarkResults benchmark_results;
     benchmark_results.name = path.string();
