@@ -5,7 +5,7 @@
 
 namespace CompressionSorts {
 
-bool IsPermutation(const std::vector<int>& order);
+bool IsPermutation(const std::vector<int>& /*order*/);
 
 template <typename T>
 std::vector<T> ApplyPermutation(const std::vector<int>& order, const std::vector<T>& a) {

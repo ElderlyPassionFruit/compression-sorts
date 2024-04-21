@@ -4,6 +4,6 @@
 
 namespace CompressionSorts {
 
-void SaveBenchmarkResults(BenchmarkResults benchmark_results);
+void SaveBenchmarkResults(BenchmarkResults /*benchmark_results*/);
 
 }

@@ -7,6 +7,6 @@ namespace CompressionSorts {
 
 using Time = std::chrono::nanoseconds;
 
-Time MesuareTime(std::function<void()> routine);
+Time MesuareTime(std::function<void()> /*routine*/);
 
 }  // namespace CompressionSorts
