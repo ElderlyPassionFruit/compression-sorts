@@ -34,3 +34,5 @@
 .cache/
 bin/
 build/
+tests_results/
+test_data/
