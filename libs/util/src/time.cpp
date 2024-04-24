@@ -4,19 +4,27 @@
 
 namespace CompressionSorts {
 
-namespace {
-
-auto Now() {
+TimePoint Now() {
     return std::chrono::high_resolution_clock::now();
 }
 
-}  // namespace
-
 Time MesuareTime(std::function<void()> routine) {
-    auto start_time = Now();
+    TimePoint start_time = Now();
     routine();
-    auto finish_time = Now();
+    TimePoint finish_time = Now();
     return std::chrono::duration_cast<Time>(finish_time - start_time);
+}
+
+TimeBudget::TimeBudget(Time budget) : budget_(budget), start_time_(Now()) {
+}
+
+Time TimeBudget::GetElapsedTime() const {
+    TimePoint current_time = Now();
+    return std::chrono::duration_cast<Time>(current_time - start_time_);
+}
+
+bool TimeBudget::operator()() {
+    return GetElapsedTime() < budget_;
 }
 
 }  // namespace CompressionSorts

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "compression_sorts/interfaces.hpp"
 #include "compression_sorts/lz4.hpp"
 #include "compression_sorts/path.hpp"
 #include "compression_sorts/permutation.hpp"
+#include "compression_sorts/permute_interface.hpp"
 #include "compression_sorts/read_data.hpp"
 #include "compression_sorts/serialize_data.hpp"
 #include "compression_sorts/time.hpp"
@@ -23,13 +23,10 @@ CompressionScore CalculateCompressionScore(const std::vector<T>& data) {
     score.compressed_size = compressed_data.size();
 
     std::vector<char> verify_serialized_data;
-    verify_serialized_data.reserve(serialized_data.size());
+    verify_serialized_data.resize(serialized_data.size());
     score.decompression_time_ns =
         CalculateLz4DecompressionTime(compressed_data, verify_serialized_data);
-
-    if constexpr (std::is_same_v<T, int>) {
-        assert(verify_serialized_data == serialize_data);
-    }
+    assert(verify_serialized_data == serialized_data);
     return score;
 }
 
@@ -55,7 +52,7 @@ BenchmarkResults TestAlgorithm(Path path, const IPermute<T>& algorithm, const si
 
         std::vector<int> order;
         test_results.find_permutation_time = CalculateFindPermutationTime(data, algorithm, order);
-        auto permuted_data = ApplyPermutation(order, data);
+        auto permuted_data = ApplyPermutation(data, order);
         test_results.permuted_score = CalculateCompressionScore(permuted_data);
 
         benchmark_results.permuted_scores.emplace_back(test_results);
