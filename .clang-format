@@ -8,4 +8,4 @@ AllowShortLoopsOnASingleLine: false
 DerivePointerAlignment: true
 KeepEmptyLinesAtTheStartOfBlocks: true
 SortIncludes: true
-InsertNewlineAtEOF: true
+# InsertNewlineAtEOF: true

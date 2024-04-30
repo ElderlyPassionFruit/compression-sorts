@@ -36,3 +36,4 @@ bin/
 build/
 tests_results/
 tests_data/
+.vscode/
