@@ -22,24 +22,26 @@ void TestAllBenchmarksWithAlgorithm(Path dir, const CompressionSorts::IPermute<T
 }
 
 int main() {
-    // Just nothing
-    {
-        CompressionSorts::IdentityPermutation<int> identity;
-        TestAllBenchmarksWithAlgorithm<int>("tests_data/int", identity, 3);
-    }
-    // Shuffle with small budget
-    {
-        CompressionSorts::ShufflePermutation<int> shuffle(1ms);
-        TestAllBenchmarksWithAlgorithm<int>("tests_data/int", shuffle, 10);
-    }
-    // Shuffle with big budget
-    {
-        CompressionSorts::ShufflePermutation<int> shuffle(1s);
-        TestAllBenchmarksWithAlgorithm<int>("tests_data/int", shuffle, 10);
-    }
-    // Just sort
-    {
-        CompressionSorts::SortPermutation<int> sort;
-        TestAllBenchmarksWithAlgorithm<int>("tests_data/int", sort, 10);
+    for (const auto tests_path : {"tests_data/int/random_small", "tests_data/int/random_big"}) {
+        // Just nothing
+        {
+            CompressionSorts::IdentityPermutation<int> identity;
+            TestAllBenchmarksWithAlgorithm<int>(tests_path, identity, 3);
+        }
+        // Shuffle with small budget
+        {
+            CompressionSorts::ShufflePermutation<int> shuffle(1ms);
+            TestAllBenchmarksWithAlgorithm<int>(tests_path, shuffle, 10);
+        }
+        // Shuffle with big budget
+        {
+            CompressionSorts::ShufflePermutation<int> shuffle(1s);
+            TestAllBenchmarksWithAlgorithm<int>(tests_path, shuffle, 10);
+        }
+        // Just sort
+        {
+            CompressionSorts::SortPermutation<int> sort;
+            TestAllBenchmarksWithAlgorithm<int>(tests_path, sort, 10);
+        }
     }
 }
