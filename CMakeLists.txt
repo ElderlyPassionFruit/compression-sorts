@@ -21,8 +21,10 @@ message("compile flags: ${CMAKE_CXX_FLAGS}")
 find_package(PkgConfig REQUIRED)
 pkg_search_module(LZ4 REQUIRED liblz4)
 
-# include(GoogleTest)
-# enable_testing()
+include(CTest)
+find_package(GTest CONFIG REQUIRED gtest)
+include(GoogleTest)
+enable_testing()
 
 set(PROJECT_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
