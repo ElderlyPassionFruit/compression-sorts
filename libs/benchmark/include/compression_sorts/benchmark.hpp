@@ -32,7 +32,7 @@ CompressionScore CalculateCompressionScore(const std::vector<T>& data) {
 
 template <typename T>
 Time CalculateFindPermutationTime(const std::vector<T>& data, const IPermute<T>& algorithm,
-                                  std::vector<T>& order) {
+                                  std::vector<size_t>& order) {
     auto helper = [&algorithm, &data, &order] { algorithm.GetOrder(data, order); };
     return MesuareTime(helper);
 }
@@ -50,7 +50,7 @@ BenchmarkResults TestAlgorithm(Path path, const IPermute<T>& algorithm, const si
     for (size_t i = 0; i < iterations; ++i) {
         TestResults test_results;
 
-        std::vector<int> order;
+        std::vector<size_t> order;
         test_results.find_permutation_time = CalculateFindPermutationTime(data, algorithm, order);
         auto permuted_data = ApplyPermutation(data, order);
         test_results.permuted_score = CalculateCompressionScore(permuted_data);
