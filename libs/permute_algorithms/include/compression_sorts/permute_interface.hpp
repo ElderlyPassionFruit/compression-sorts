@@ -3,11 +3,12 @@
 #include <string>
 #include <vector>
 
+#include "compression_sorts/block.hpp"
+
 namespace CompressionSorts {
 
-template <typename T>
 struct IPermute {
-    virtual void GetOrder(const std::vector<T>& /*data*/, std::vector<int>& /*order*/) const = 0;
+    virtual void GetPermutation(Block& /*block*/, std::vector<size_t>& /*order*/) const = 0;
     virtual std::string GetName() const = 0;
 
     virtual ~IPermute() = default;
