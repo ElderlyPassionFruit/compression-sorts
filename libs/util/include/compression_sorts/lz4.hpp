@@ -11,7 +11,7 @@ namespace CompressionSorts {
 
 std::vector<char> CompressLz4(const std::vector<char>& /*input*/);
 
-std::vector<char> DecompressData(const std::vector<char>& /*compressed*/, int /*original_size*/);
+std::vector<char> DecompressLz4(const std::vector<char>& /*compressed*/, int /*original_size*/);
 
 Time CalculateLz4CompressionTime(const std::vector<char>& /*data*/,
                                  std::vector<char>& /*compressed_data*/);
@@ -33,7 +33,7 @@ public:
         std::swap(order_[i], order_[j]);
     }
 
-    void SetPermutation(const std::vector<int>& order) {
+    void SetPermutation(const std::vector<size_t>& order) {
         order_ = order;
     }
 
@@ -47,7 +47,7 @@ public:
 
 private:
     std::vector<T> data_;
-    std::vector<int> order_;
+    std::vector<size_t> order_;
 };
 
 }  // namespace CompressionSorts
