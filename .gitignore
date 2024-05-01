@@ -36,4 +36,6 @@ bin/
 build/
 tests_results/
 tests_data/
+generator/downloads/
 .vscode/
+.venv/

@@ -1,0 +1,1 @@
+https://datasets.clickhouse.com/hits_compatible/hits.csv.gz
