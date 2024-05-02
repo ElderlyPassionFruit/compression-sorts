@@ -10,7 +10,7 @@ message("C++ compiler: ${CMAKE_CXX_COMPILER_ID}")
 message("build type: ${CMAKE_BUILD_TYPE}")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fsanitize=address,undefined,leak -Wall -Wextra -Wno-sign-compare -Wno-unused-result -g")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fsanitize=address,undefined,leak -Wall -Wextra -Wno-sign-compare -Wno-unused-result")
     set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address,undefined,leak")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Wno-sign-compare -Wno-unused-result -Werror")
