@@ -9,7 +9,7 @@ class ShufflePermute : public IPermute {
 public:
     explicit ShufflePermute(Time /*budget*/);
 
-    void GetPermutation(Block& /*block*/, std::vector<size_t>& /*order*/) const override;
+    void GetPermutation(const Block& /*block*/, std::vector<size_t>& /*order*/) const override;
     std::string GetName() const override;
 
 private:

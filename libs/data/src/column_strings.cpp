@@ -2,10 +2,15 @@
 
 #include <unordered_set>
 
+#include "compression_sorts/lz4.hpp"
+#include "compression_sorts/permutation.hpp"
+#include "compression_sorts/range.hpp"
+#include "compression_sorts/serialize_data.hpp"
+#include "compression_sorts/stupid_compression_calculator.hpp"
+
 namespace CompressionSorts {
 
-ColumnStrings::ColumnStrings(ColumnStrings::Container data)
-    : data_(std::move(data)), calculator_(data_) {
+ColumnStrings::ColumnStrings(ColumnStrings::Container data) : data_(std::move(data)) {
 }
 
 std::string ColumnStrings::GetTypeName() const {
@@ -21,12 +26,11 @@ size_t ColumnStrings::GetSerializedSize() const {
 }
 
 size_t ColumnStrings::CalculateCompressionSize() const {
-    return calculator_.GetCurrentScore();
+    return CompressLz4(SerializeData(data_)).size();
 }
 
 void ColumnStrings::ApplyPermutation(const std::vector<size_t>& order) {
-    ::CompressionSorts::ApplyPermutation(data_, order);
-    calculator_.SetPermutation(order);
+    CompressionSorts::ApplyPermutation(data_, order);
 }
 
 size_t ColumnStrings::CalculateDistinctValuesInRange(const Range& range) const {
@@ -37,7 +41,7 @@ size_t ColumnStrings::CalculateDistinctValuesInRange(const Range& range) const {
 }
 
 void ColumnStrings::UpdatePermutation(std::vector<size_t>& order, const Range& range,
-                                      Algorithms algorithm) {
+                                      Algorithms algorithm) const {
     // std::sort(std::advance(order.begin(), range.from), std::advance(order.begin(),
     // range.to));
     switch (algorithm) {
@@ -49,8 +53,17 @@ void ColumnStrings::UpdatePermutation(std::vector<size_t>& order, const Range& r
     }
 }
 
-void ColumnStrings::SwapRaws(size_t i, size_t j) {
-    swap(data_[i], data_[j]);
+OnlineCompressionCalculatorPtr ColumnStrings::GetOnlineCompressionCalculator() const {
+    return std::make_unique<StupidOnlineCompressionCalculator<std::string>>(data_);
+}
+
+EqualRanges ColumnStrings::GetEqualRanges(const std::vector<size_t>& order,
+                                          const Range& range) const {
+    return ::CompressionSorts::GetEqualRanges(data_, order, range);
+}
+
+std::vector<char> ColumnStrings::GetSerializedData() const {
+    return SerializeData(data_);
 }
 
 }  // namespace CompressionSorts

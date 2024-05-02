@@ -1,4 +1,3 @@
-
 #include "compression_sorts/lz4.hpp"
 
 #include <gtest/gtest.h>

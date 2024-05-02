@@ -1,6 +1,6 @@
-set(LIBRARIES GTest::gtest_main compression_sorts_util)
+set(LIBRARIES GTest::gtest_main compression_sorts_util compression_sorts_data)
 
-set(UNIT_TESTS lz4_test permutation_test)
+set(UNIT_TESTS column_integers_test)
 
 foreach(TEST IN LISTS UNIT_TESTS)
     message("test: ${TEST}")

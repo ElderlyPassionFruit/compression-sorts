@@ -6,7 +6,7 @@ namespace CompressionSorts {
 
 class LexicographicSortPermute : public IPermute {
 public:
-    void GetPermutation(Block& /*block*/, std::vector<size_t>& /*order*/) const override;
+    void GetPermutation(const Block& /*block*/, std::vector<size_t>& /*order*/) const override;
     std::string GetName() const override;
 };
 

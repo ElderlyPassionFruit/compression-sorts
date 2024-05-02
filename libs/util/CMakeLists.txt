@@ -4,6 +4,8 @@ add_library(${target} STATIC
     src/get_all_files.cpp
     src/lz4.cpp
     src/permutation.cpp
+    src/read_data.cpp
+    src/serialize_data.cpp
     src/time.cpp
 )
 

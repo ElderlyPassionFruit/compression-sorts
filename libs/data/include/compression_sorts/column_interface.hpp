@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "compression_sorts/online_compression_calculator_interface.hpp"
 #include "compression_sorts/range.hpp"
 
 namespace CompressionSorts {
@@ -11,8 +12,9 @@ enum class Algorithms {
     LexicographicSort,
 };
 
-class IColumn {
-public:
+struct IColumn {
+    virtual ~IColumn() = default;
+
     virtual std::string GetTypeName() const = 0;
 
     virtual size_t GetSize() const = 0;
@@ -21,14 +23,14 @@ public:
     virtual void ApplyPermutation(const std::vector<size_t>& /*order*/) = 0;
     virtual size_t CalculateDistinctValuesInRange(const Range& /*range*/) const = 0;
     virtual void UpdatePermutation(std::vector<size_t>& /*order*/, const Range& /*range*/,
-                                   Algorithms /*algorithm*/) = 0;
+                                   Algorithms /*algorithm*/) const = 0;
     virtual EqualRanges GetEqualRanges(const std::vector<size_t>& /*order*/,
-                                       const Range& /*range*/) = 0;
+                                       const Range& /*range*/) const = 0;
 
-    // for common Simulated Annealing: https://en.wikipedia.org/wiki/Simulated_annealing
-    virtual void SwapRaws(size_t /*i*/, size_t /*j*/) = 0;
-
-    virtual ~IColumn() = default;
+    virtual OnlineCompressionCalculatorPtr GetOnlineCompressionCalculator() const = 0;
+    virtual std::vector<char> GetSerializedData() const = 0;
 };
+
+using ColumnPtr = std::unique_ptr<IColumn>;
 
 }  // namespace CompressionSorts

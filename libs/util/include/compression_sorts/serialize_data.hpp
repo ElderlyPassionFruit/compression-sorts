@@ -18,4 +18,7 @@ std::vector<char> SerializeData(const std::vector<T>& data) {
     return serialized_data;
 }
 
+template <>
+std::vector<char> SerializeData(const std::vector<std::string>& data);
+
 }  // namespace CompressionSorts

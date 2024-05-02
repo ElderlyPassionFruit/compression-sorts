@@ -1,5 +1,6 @@
 #include "compression_sorts/lexicographic_sort.hpp"
 
+#include "compression_sorts/permutation.hpp"
 #include "compression_sorts/range.hpp"
 
 namespace CompressionSorts {
@@ -15,9 +16,11 @@ void AddRanges(EqualRanges& equal_ranges, EqualRanges new_equal_ranges) {
 
 }  // namespace
 
-void LexicographicSortPermute::GetPermutation(Block& block, std::vector<size_t>& order) const {
+void LexicographicSortPermute::GetPermutation(const Block& block,
+                                              std::vector<size_t>& order) const {
     EqualRanges equal_ranges{Range{.from = 0, .to = block.GetSize()}};
     auto& columns = block.GetData();
+    order = GetIdentityPermutation(block.GetSize());
     for (const auto& column : columns) {
         EqualRanges new_equal_ranges;
         for (const auto& range : equal_ranges) {
