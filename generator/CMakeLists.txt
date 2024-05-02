@@ -4,7 +4,7 @@ add_executable(${target}
     main.cpp
 )
 
-target_link_libraries(${target} PRIVATE
+target_link_libraries(${target} PUBLIC
     compression_sorts_util
 )
 
