@@ -1,11 +1,12 @@
 set(target benchmark)
 
-add_executable(${target}    
+add_executable(${target}
     main.cpp
 )
 
-target_link_libraries(${target} PRIVATE
-    compression_sorts_benchmark    
+target_link_libraries(${target} PUBLIC
+    compression_sorts_benchmark
+    compression_sorts_data
     compression_sorts_permute_algorithms
     compression_sorts_util
 )
