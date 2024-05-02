@@ -3,6 +3,7 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <random>
 #include <string>
 #include <vector>
@@ -81,7 +82,8 @@ int main() {
     // random big integers
     {
         const auto batches = GenBatches(1'000'000, 1.2);
-        std::uniform_int_distribution<> distribution(-1'000'000'000, 1'000'000'000);
+        std::uniform_int_distribution<int64_t> distribution(std::numeric_limits<int64_t>::min(),
+                                                            std::numeric_limits<int64_t>::max());
         auto raw_generator = [&rnd, &distribution]() -> std::string {
             return std::to_string(distribution(rnd));
         };

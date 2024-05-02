@@ -14,6 +14,8 @@ struct CompressionScore {
     size_t compressed_size = 0;
     Time compression_time_ns = 0ns;
     Time decompression_time_ns = 0ns;
+
+    CompressionScore& operator+=(const CompressionScore& other);
 };
 
 struct TestResults {
@@ -24,7 +26,8 @@ struct TestResults {
 struct BenchmarkResults {
     std::string name;
     std::string algorithm_name;
-    size_t array_length = 0;
+    size_t raws = 0;
+    size_t columns = 0;
 
     CompressionScore initial_score{};
     std::vector<TestResults> permuted_scores{};

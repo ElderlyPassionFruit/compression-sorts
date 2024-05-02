@@ -1,23 +1,24 @@
 #pragma once
 
 #include <cassert>
-// #include <iostream>
+#include <iostream>
 #include <vector>
 
 namespace CompressionSorts {
 
-bool IsPermutation(const std::vector<int>& /*order*/);
+bool IsPermutation(const std::vector<size_t>& /*order*/);
 
-std::vector<int> GenRandomPermutation(size_t /*n*/);
+std::vector<size_t> GetIdentityPermutation(size_t /*n*/);
+
+std::vector<size_t> GenRandomPermutation(size_t /*n*/);
+
+std::vector<size_t> GetInversePermutation(const std::vector<size_t>& /*order*/);
 
 template <typename T>
-std::vector<T> ApplyPermutation(const std::vector<T>& data, const std::vector<int>& order) {
+std::vector<T> ApplyPermutation(const std::vector<T>& data, const std::vector<size_t>& order) {
+    // std::cerr << "data.size() = " << data.size() << " order.size() = " << order.size() <<
+    // std::endl;
     assert(order.size() == data.size());
-    // std::cerr << "order = " << std::endl;
-    // for (auto i : order) {
-    //     std::cerr << i << " ";
-    // }
-    // std::cerr << std::endl;
     assert(IsPermutation(order));
     size_t n = order.size();
     std::vector<T> ans(n);
