@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cassert>
-#include <iostream>
 #include <vector>
 
 namespace CompressionSorts {
@@ -16,8 +15,6 @@ std::vector<size_t> GetInversePermutation(const std::vector<size_t>& /*order*/);
 
 template <typename T>
 std::vector<T> ApplyPermutation(const std::vector<T>& data, const std::vector<size_t>& order) {
-    // std::cerr << "data.size() = " << data.size() << " order.size() = " << order.size() <<
-    // std::endl;
     assert(order.size() == data.size());
     assert(IsPermutation(order));
     size_t n = order.size();

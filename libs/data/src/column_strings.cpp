@@ -30,24 +30,26 @@ size_t ColumnStrings::CalculateCompressionSize() const {
 }
 
 void ColumnStrings::ApplyPermutation(const std::vector<size_t>& order) {
-    CompressionSorts::ApplyPermutation(data_, order);
+    data_ = CompressionSorts::ApplyPermutation(data_, order);
 }
 
 size_t ColumnStrings::CalculateDistinctValuesInRange(const Range& range) const {
-    // std::unordered_set<T> elements{std::advance(data_.begin(), range.from),
-    //                                std::advance(data_.begin(), range.to)};
-    std::unordered_set<std::string> elements{data_.begin() + range.from, data_.begin() + range.to};
+    assert(range.from <= range.to);
+    auto begin = std::next(data_.begin(), range.from);
+    auto end = std::next(data_.begin(), range.to);
+    std::unordered_set<std::string> elements{begin, end};
     return elements.size();
 }
 
 void ColumnStrings::UpdatePermutation(std::vector<size_t>& order, const Range& range,
                                       Algorithms algorithm) const {
-    // std::sort(std::advance(order.begin(), range.from), std::advance(order.begin(),
-    // range.to));
+    assert(range.from <= range.to);
     switch (algorithm) {
         case Algorithms::LexicographicSort: {
             auto comparator = [&](size_t i, size_t j) { return data_[i] < data_[j]; };
-            std::sort(order.begin() + range.from, order.begin() + range.to, comparator);
+            auto begin = std::next(order.begin(), range.from);
+            auto end = std::next(order.begin(), range.to);
+            std::sort(begin, end, comparator);
             break;
         }
     }

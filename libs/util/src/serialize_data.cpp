@@ -13,8 +13,8 @@ std::vector<char> SerializeData(const std::vector<std::string>& data) {
     serialized_data.resize(total_size);
     size_t pos = 0;
     for (const auto& string : data) {
-        // TODO: std::advance?
-        std::copy(string.begin(), string.end(), serialized_data.begin() + pos);
+        auto result_begin = std::next(serialized_data.begin(), pos);
+        std::copy(string.begin(), string.end(), result_begin);
         pos += string.size();
     }
     return serialized_data;

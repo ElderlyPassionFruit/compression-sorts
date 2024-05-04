@@ -13,7 +13,9 @@
 std::vector<size_t> GenBatches(size_t max_batch_size, double exponent) {
     std::vector<size_t> batches;
     for (size_t new_batch_size = 1; new_batch_size <= max_batch_size;
-         new_batch_size = ceil(exponent * new_batch_size)) {
+         new_batch_size = new_batch_size < max_batch_size
+                              ? std::min<size_t>(max_batch_size, ceil(exponent * new_batch_size))
+                              : static_cast<size_t>(ceil(exponent * new_batch_size))) {
         batches.push_back(new_batch_size);
     }
     return batches;
@@ -65,13 +67,13 @@ int main() {
 
     // hits
     {
-        const auto batches = GenBatches(1'000'000, 1.2);
+        const auto batches = GenBatches(100'000, 1.2);
         GenerateSplitBatches("tests_data/clickhouse/hits", batches, "generator/downloads/hits.csv");
     }
 
     // random small integers
     {
-        const auto batches = GenBatches(1'000'000, 1.2);
+        const auto batches = GenBatches(100'000, 1.2);
         std::uniform_int_distribution<> distribution(-100, 100);
         auto raw_generator = [&rnd, &distribution]() -> std::string {
             return std::to_string(distribution(rnd));
@@ -81,7 +83,7 @@ int main() {
 
     // random big integers
     {
-        const auto batches = GenBatches(1'000'000, 1.2);
+        const auto batches = GenBatches(100'000, 1.2);
         std::uniform_int_distribution<int64_t> distribution(std::numeric_limits<int64_t>::min(),
                                                             std::numeric_limits<int64_t>::max());
         auto raw_generator = [&rnd, &distribution]() -> std::string {
