@@ -10,6 +10,8 @@ namespace CompressionSorts {
 struct Range {
     size_t from;
     size_t to;
+
+    bool operator==(const Range& other) const;
 };
 
 using EqualRanges = std::vector<Range>;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <type_traits>
 #include <unordered_set>
 
 #include "column_interface.hpp"
@@ -37,24 +36,26 @@ public:
     }
 
     void ApplyPermutation(const std::vector<size_t>& order) override {
-        CompressionSorts::ApplyPermutation(data_, order);
+        data_ = CompressionSorts::ApplyPermutation(data_, order);
     }
 
     size_t CalculateDistinctValuesInRange(const Range& range) const override {
-        // std::unordered_set<T> elements{std::advance(data_.begin(), range.from),
-        //                                std::advance(data_.begin(), range.to)};
-        std::unordered_set<T> elements{data_.begin() + range.from, data_.begin() + range.to};
+        assert(range.from <= range.to);
+        auto begin = std::next(data_.begin(), range.from);
+        auto end = std::next(data_.begin(), range.to);
+        std::unordered_set<T> elements{begin, end};
         return elements.size();
     }
 
     void UpdatePermutation(std::vector<size_t>& order, const Range& range,
                            Algorithms algorithm) const override {
-        // std::sort(std::advance(order.begin(), range.from), std::advance(order.begin(),
-        // range.to));
+        assert(range.from <= range.to);
         switch (algorithm) {
             case Algorithms::LexicographicSort: {
                 auto comparator = [&](size_t i, size_t j) { return data_[i] < data_[j]; };
-                std::sort(order.begin() + range.from, order.begin() + range.to, comparator);
+                auto begin = std::next(order.begin(), range.from);
+                auto end = std::next(order.begin(), range.to);
+                std::sort(begin, end, comparator);
                 break;
             }
         }
@@ -71,6 +72,10 @@ public:
 
     std::vector<char> GetSerializedData() const override {
         return SerializeData(data_);
+    }
+
+    const Container& GetData() const {
+        return data_;
     }
 
 private:
