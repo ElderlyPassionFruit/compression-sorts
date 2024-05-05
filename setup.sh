@@ -2,7 +2,7 @@
 sudo apt update
 sudo apt upgrade -y
 
-sudo apt install python3 python3-dev git wget unzip acl build-essential libssl-dev libffi-dev liblz4-dev -y
+sudo apt install python3 python3-dev git wget unzip acl build-essential libssl-dev libffi-dev liblz4-dev linux-tools-common linux-tools-generic -y
 
 GTEST_VERSION=1.12.1
 

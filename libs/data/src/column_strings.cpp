@@ -35,8 +35,8 @@ void ColumnStrings::ApplyPermutation(const std::vector<size_t>& order) {
 
 size_t ColumnStrings::CalculateDistinctValuesInRange(const Range& range) const {
     assert(range.from <= range.to);
-    auto begin = std::next(data_.begin(), range.from);
-    auto end = std::next(data_.begin(), range.to);
+    auto begin = std::ranges::next(data_.begin(), range.from);
+    auto end = std::ranges::next(data_.begin(), range.to);
     std::unordered_set<std::string> elements{begin, end};
     return elements.size();
 }
@@ -47,8 +47,8 @@ void ColumnStrings::UpdatePermutation(std::vector<size_t>& order, const Range& r
     switch (algorithm) {
         case Algorithms::LexicographicSort: {
             auto comparator = [&](size_t i, size_t j) { return data_[i] < data_[j]; };
-            auto begin = std::next(order.begin(), range.from);
-            auto end = std::next(order.begin(), range.to);
+            auto begin = std::ranges::next(order.begin(), range.from);
+            auto end = std::ranges::next(order.begin(), range.to);
             std::sort(begin, end, comparator);
             break;
         }

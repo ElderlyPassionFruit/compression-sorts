@@ -135,29 +135,23 @@ void TestAllBenchmarksWithAlgorithm(Tests tests, const IPermute& algorithm,
 
 template <std::integral T>
 void TestAllSingleIntegersColumnTests(Path dir) {
-    // // Just nothing
-    // {
-    //     auto tests = GetAllSingleColumnTests<T>(dir);
-    //     CompressionSorts::IdentityPermute identity;
-    //     TestAllBenchmarksWithAlgorithm(std::move(tests), identity, 3);
-    // }
-    // // Shuffle with small budget
-    // {
-    //     auto tests = GetAllSingleColumnTests<T>(dir);
-    //     CompressionSorts::ShufflePermute shuffle(1ms);
-    //     TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 10);
-    // }
-    // // Shuffle with big budget
-    // {
-    //     auto tests = GetAllSingleColumnTests<T>(dir);
-    //     CompressionSorts::ShufflePermute shuffle(100ms);
-    //     TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 10);
-    // }
+    // Just nothing
+    {
+        auto tests = GetAllSingleColumnTests<T>(dir);
+        CompressionSorts::IdentityPermute identity;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), identity, 1);
+    }
+    // Shuffle with big budget
+    {
+        auto tests = GetAllSingleColumnTests<T>(dir);
+        CompressionSorts::ShufflePermute shuffle(100ms);
+        TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 1);
+    }
     // Just sort
     {
         auto tests = GetAllSingleColumnTests<T>(dir);
         CompressionSorts::LexicographicSortPermute sort;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 10);
+        TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 1);
     }
 }
 
@@ -166,32 +160,26 @@ void TestHitsViaStrings(Path dir) {
     {
         auto tests = GetAllFullAsStringsTests(dir);
         CompressionSorts::IdentityPermute identity;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), identity, 3);
-    }
-    // Shuffle with small budget
-    {
-        auto tests = GetAllFullAsStringsTests(dir);
-        CompressionSorts::ShufflePermute shuffle(1ms);
-        TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 10);
+        TestAllBenchmarksWithAlgorithm(std::move(tests), identity, 1);
     }
     // Shuffle with big budget
     {
         auto tests = GetAllFullAsStringsTests(dir);
         CompressionSorts::ShufflePermute shuffle(100ms);
-        TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 10);
+        TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 1);
     }
     // Just sort
     {
         auto tests = GetAllFullAsStringsTests(dir);
         CompressionSorts::LexicographicSortPermute sort;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 10);
+        TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 1);
     }
 }
 
 }  // namespace
 
 int main() {
-    // TestAllSingleIntegersColumnTests<int8_t>("tests_data/int/random_small");
-    // TestAllSingleIntegersColumnTests<int64_t>("tests_data/int/random_big");
+    TestAllSingleIntegersColumnTests<int8_t>("tests_data/int/random_small");
+    TestAllSingleIntegersColumnTests<int64_t>("tests_data/int/random_big");
     TestHitsViaStrings("tests_data/clickhouse/hits");
 }
