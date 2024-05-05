@@ -1,33 +1,39 @@
-#include "compression_sorts/shuffle.hpp"
+#include "compression_sorts/local_optimizations.hpp"
 
 #include <iostream>
+#include <random>
 
-#include "compression_sorts/online_compression_calculator_interface.hpp"
 #include "compression_sorts/permutation.hpp"
 
 namespace CompressionSorts {
 
 namespace {
 
+std::mt19937_64 rnd(179);
+
 bool TryImprove(const OnlineCompressionCalculatorPtr& online_calculator, std::vector<size_t>& order,
                 size_t score) {
-    auto new_order = GenRandomPermutation(order.size());
-    online_calculator->ApplyPermutation(new_order);
+    std::uniform_int_distribution<> distribution(0, order.size() - 1);
+    size_t i = distribution(rnd);
+    size_t j = distribution(rnd);
+    online_calculator->Swap(i, j);
     size_t new_score = online_calculator->GetCurrentCompressedSize();
     if (new_score >= score) {
+        online_calculator->Swap(i, j);
         return false;
     }
-    order = new_order;
+    std::swap(order[i], order[j]);
     score = new_score;
     return true;
 }
 
 }  // namespace
 
-ShufflePermute::ShufflePermute(Time budget) : budget_(budget) {
+LocalOptimizationsPermute::LocalOptimizationsPermute(Time budget) : budget_(budget) {
 }
 
-void ShufflePermute::GetPermutation(const Block& block, std::vector<size_t>& order) const {
+void LocalOptimizationsPermute::GetPermutation(const Block& block,
+                                               std::vector<size_t>& order) const {
     auto online_calculator = block.GetOnlineCompressionCalculator();
     order = GetIdentityPermutation(block.GetSize());
     TimeBudget time_budget(budget_);
@@ -40,12 +46,13 @@ void ShufflePermute::GetPermutation(const Block& block, std::vector<size_t>& ord
         }
         ++iterations;
     }
-    std::cerr << "ShufflePermute: size = " << order.size() << " iterations = " << iterations
-              << " improve_iterations = " << improve_iterations << std::endl;
+    std::cerr << "LocalOptimizationsPermute: size = " << order.size()
+              << " iterations = " << iterations << " improve_iterations = " << improve_iterations
+              << std::endl;
 }
 
-std::string ShufflePermute::GetName() const {
-    return "shuffle-" + std::to_string(budget_.count());
+std::string LocalOptimizationsPermute::GetName() const {
+    return "local-optimizations-" + std::to_string(budget_.count());
 }
 
 }  // namespace CompressionSorts

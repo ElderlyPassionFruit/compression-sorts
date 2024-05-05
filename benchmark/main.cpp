@@ -7,6 +7,7 @@
 #include "compression_sorts/get_all_files.hpp"
 #include "compression_sorts/identity.hpp"
 #include "compression_sorts/lexicographic_sort.hpp"
+#include "compression_sorts/local_optimizations.hpp"
 #include "compression_sorts/read_data.hpp"
 #include "compression_sorts/shuffle.hpp"
 #include "compression_sorts/statistics_saver.hpp"
@@ -147,6 +148,12 @@ void TestAllSingleIntegersColumnTests(Path dir) {
         CompressionSorts::ShufflePermute shuffle(100ms);
         TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 1);
     }
+    // LocalOptimizations with big budget
+    {
+        auto tests = GetAllSingleColumnTests<T>(dir);
+        CompressionSorts::LocalOptimizationsPermute local_optimizations(100ms);
+        TestAllBenchmarksWithAlgorithm(std::move(tests), local_optimizations, 1);
+    }
     // Just sort
     {
         auto tests = GetAllSingleColumnTests<T>(dir);
@@ -168,11 +175,29 @@ void TestHitsViaStrings(Path dir) {
         CompressionSorts::ShufflePermute shuffle(100ms);
         TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 1);
     }
+    // LocalOptimizations with big budget
+    {
+        auto tests = GetAllFullAsStringsTests(dir);
+        CompressionSorts::LocalOptimizationsPermute local_optimizations(100ms);
+        TestAllBenchmarksWithAlgorithm(std::move(tests), local_optimizations, 1);
+    }
     // Just sort
     {
         auto tests = GetAllFullAsStringsTests(dir);
         CompressionSorts::LexicographicSortPermute sort;
         TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 1);
+    }
+    // Offline best order
+    {
+        auto tests = GetAllFullAsStringsTests(dir);
+        CompressionSorts::LexicographicSortOfflineColumnOrderPermute sort_offline_order;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), sort_offline_order, 1);
+    }
+    // Online best order
+    {
+        auto tests = GetAllFullAsStringsTests(dir);
+        CompressionSorts::LexicographicSortOnlineColumnOrderPermute sort_online_order;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), sort_online_order, 1);
     }
 }
 
