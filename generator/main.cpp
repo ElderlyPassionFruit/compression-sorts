@@ -65,15 +65,10 @@ void GenerateSplitBatches(CompressionSorts::Path dir, const std::vector<size_t>&
 int main() {
     std::mt19937_64 rnd(179);
 
-    // hits
-    {
-        const auto batches = GenBatches(100'000, 1.2);
-        GenerateSplitBatches("tests_data/clickhouse/hits", batches, "generator/downloads/hits.csv");
-    }
-
     // random small integers
     {
-        const auto batches = GenBatches(100'000, 1.2);
+        constexpr size_t kMaxBatchSize = 1000000;
+        const auto batches = GenBatches(kMaxBatchSize, 1.2);
         std::uniform_int_distribution<> distribution(-100, 100);
         auto raw_generator = [&rnd, &distribution]() -> std::string {
             return std::to_string(distribution(rnd));
@@ -83,12 +78,20 @@ int main() {
 
     // random big integers
     {
-        const auto batches = GenBatches(100'000, 1.2);
+        constexpr size_t kMaxBatchSize = 1000000;
+        const auto batches = GenBatches(kMaxBatchSize, 1.2);
         std::uniform_int_distribution<int64_t> distribution(std::numeric_limits<int64_t>::min(),
                                                             std::numeric_limits<int64_t>::max());
         auto raw_generator = [&rnd, &distribution]() -> std::string {
             return std::to_string(distribution(rnd));
         };
         GenerateTests("tests_data/int/random_big", batches, raw_generator);
+    }
+
+    // hits
+    {
+        constexpr size_t kMaxBatchSize = 100000;
+        const auto batches = GenBatches(kMaxBatchSize, 1.2);
+        GenerateSplitBatches("tests_data/clickhouse/hits", batches, "generator/downloads/hits.csv");
     }
 }

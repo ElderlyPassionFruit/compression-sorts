@@ -41,8 +41,8 @@ public:
 
     size_t CalculateDistinctValuesInRange(const Range& range) const override {
         assert(range.from <= range.to);
-        auto begin = std::next(data_.begin(), range.from);
-        auto end = std::next(data_.begin(), range.to);
+        auto begin = std::ranges::next(data_.begin(), range.from);
+        auto end = std::ranges::next(data_.begin(), range.to);
         std::unordered_set<T> elements{begin, end};
         return elements.size();
     }
@@ -53,8 +53,8 @@ public:
         switch (algorithm) {
             case Algorithms::LexicographicSort: {
                 auto comparator = [&](size_t i, size_t j) { return data_[i] < data_[j]; };
-                auto begin = std::next(order.begin(), range.from);
-                auto end = std::next(order.begin(), range.to);
+                auto begin = std::ranges::next(order.begin(), range.from);
+                auto end = std::ranges::next(order.begin(), range.to);
                 std::sort(begin, end, comparator);
                 break;
             }

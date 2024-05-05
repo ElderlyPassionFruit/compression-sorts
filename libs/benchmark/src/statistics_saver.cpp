@@ -11,10 +11,21 @@ namespace CompressionSorts {
 namespace {
 
 static const std::string kTestsInfoScheme =
-    "name,raws,columns,serialized_size,compressed_size,compression_time_ns,decompression_time_ns";
+    "name,"
+    "raws,"
+    "columns,"
+    "serialized_size,"
+    "compressed_size,"
+    "compression_time_ns,"
+    "decompression_time_ns";
 
 static const std::string kAlgorithmsScheme =
-    "name,algorithm_name,find_permutation_time,serialized_size,compressed_size,compression_time_ns,"
+    "name,"
+    "algorithm_name,"
+    "find_permutation_time_ns,"
+    "serialized_size,"
+    "compressed_size,"
+    "compression_time_ns,"
     "decompression_time_ns";
 
 }  // namespace

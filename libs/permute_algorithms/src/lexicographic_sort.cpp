@@ -23,6 +23,7 @@ void LexicographicSortPermute::GetPermutation(const Block& block,
     order = GetIdentityPermutation(block.GetSize());
     for (const auto& column : columns) {
         EqualRanges new_equal_ranges;
+        new_equal_ranges.reserve(equal_ranges.size());
         for (const auto& range : equal_ranges) {
             column->UpdatePermutation(order, range, Algorithms::LexicographicSort);
             auto current_equal_ranges = column->GetEqualRanges(order, range);
