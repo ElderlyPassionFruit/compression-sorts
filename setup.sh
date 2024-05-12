@@ -24,5 +24,6 @@ cmake ..
 make -j
 cd ..
 
+./generator/download_data.sh
 # python3 generator/download_data.py
 ./bin/generate_tests_data
