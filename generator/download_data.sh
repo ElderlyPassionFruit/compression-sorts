@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir downloads
+mkdir generator/downloads
 
 # hits - main ClickHouse test dataset
 curl -L https://datasets.clickhouse.com/hits_compatible/hits.csv.gz | gunzip > generator/downloads/hits.csv
