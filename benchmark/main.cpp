@@ -162,7 +162,7 @@ void TestAllSingleIntegersColumnTests(Path dir) {
     }
 }
 
-void TestHitsViaStrings(Path dir) {
+void TestViaStrings(Path dir) {
     // Just nothing
     {
         auto tests = GetAllFullAsStringsTests(dir);
@@ -206,5 +206,6 @@ void TestHitsViaStrings(Path dir) {
 int main() {
     TestAllSingleIntegersColumnTests<int8_t>("tests_data/int/random_small");
     TestAllSingleIntegersColumnTests<int64_t>("tests_data/int/random_big");
-    TestHitsViaStrings("tests_data/clickhouse/hits");
+    TestViaStrings("tests_data/clickhouse/hits");
+    TestViaStrings("tests_data/english/dictionary");
 }
