@@ -1,5 +1,7 @@
 #include "compression_sorts/read_data.hpp"
 
+#include <fstream>
+
 namespace CompressionSorts {
 
 std::vector<std::string> ReadLines(Path path) {
