@@ -5,6 +5,14 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt install python3 python3-dev git wget unzip acl build-essential libssl-dev libffi-dev liblz4-dev linux-tools-common linux-tools-generic -y
 
+# install python dependencies into the virtual environment
+python3 -m venv --without-pip .venv
+source /.venv/bin/activate
+curl https://bootstrap.pypa.io/get-pip.py | python3
+deactivate
+source /.venv/bin/activate
+pip install --upgrade -r requirements.txt
+
 # install googletests with fixed release version
 GTEST_VERSION=1.12.1
 rm -rf googletest
