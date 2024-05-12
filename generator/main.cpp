@@ -89,7 +89,6 @@ void GenerateRandomPrefixBatches(CompressionSorts::Path dir, const std::vector<s
 }
 
 int main() {
-
     // random small integers
     {
         constexpr size_t kMaxBatchSize = 1000000;
@@ -99,6 +98,26 @@ int main() {
             return std::to_string(distribution(rnd));
         };
         GenerateTests("tests_data/int/random_small", batches, raw_generator);
+    }
+
+    // random integer column tables
+    {
+        constexpr size_t kCntSmallIntegerColumns = 20;
+        constexpr size_t kMaxBatchSize = 1'000'000 / kCntSmallIntegerColumns;
+        const auto batches = GenBatches(kMaxBatchSize, 1.2);
+
+        std::uniform_int_distribution<> distribution(-100, 100);
+        auto raw_generator = [&distribution](size_t /*raw*/) -> std::string {
+            std::string buffer;
+            for (size_t i = 0; i < kCntSmallIntegerColumns; ++i) {
+                if (i > 0) {
+                    buffer += ',';
+                }
+                buffer += std::to_string(distribution(rnd));
+            }
+            return buffer;
+        };
+        GenerateTests("tests_data/int/many_random_small", batches, raw_generator);
     }
 
     // random big integers
@@ -127,4 +146,26 @@ int main() {
         GenerateRandomPrefixBatches("tests_data/english/dictionary", batches,
                                     "generator/downloads/dictionary.csv");
     }
+
+    // price_paid_transaction_data
+    {
+        constexpr size_t kMaxBatchSize = 100000;
+        const auto batches = GenBatches(kMaxBatchSize, 1.2);
+        GenerateSplitBatches("tests_data/clickhouse/price_paid_transaction_data", batches,
+                             "generator/downloads/price_paid_transaction_data.csv");
+    }
+
+    // "What's on the Menu?"
+    {
+        constexpr size_t kMaxBatchSize = 1000;
+        const auto batches = GenBatches(kMaxBatchSize, 1.2);
+        GenerateSplitBatches("tests_data/clickhouse/dish", batches, "generator/downloads/Dish.csv");
+        GenerateSplitBatches("tests_data/clickhouse/menu", batches, "generator/downloads/Menu.csv");
+        GenerateSplitBatches("tests_data/clickhouse/menu_item", batches,
+                             "generator/downloads/MenuItem.csv");
+        GenerateSplitBatches("tests_data/clickhouse/menu_page", batches,
+                             "generator/downloads/MenuPage.csv");
+    }
+
+    return EXIT_SUCCESS;
 }

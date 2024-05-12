@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 
 #include "compression_sorts/benchmark.hpp"
@@ -125,6 +126,40 @@ Tests GetAllFullAsStringsTests(Path dir) {
     return tests;
 }
 
+template <std::integral T>
+std::vector<T> StringsToIntegers(const std::vector<std::string>& data) {
+    std::vector<T> result(data.size());
+    for (size_t i = 0; i < data.size(); ++i) {
+        result[i] = FromString<T>(data[i]);
+    }
+    return result;
+}
+
+template <std::integral T>
+Tests GetAllFullAsIntegerTests(Path dir) {
+    auto paths = GetAllFiles(dir);
+    Tests tests;
+    for (const auto& path : paths) {
+        auto data = ReadData<std::string>(path);
+        auto columns_data_strings = Transpose(SplitAllStrings(data, ','));
+        std::vector<std::vector<T>> columns_data;
+        for (const auto& column_string : columns_data_strings) {
+            columns_data.push_back(StringsToIntegers<T>(column_string));
+        }
+        size_t cnt_columns = columns_data.size();
+        Block::Container columns(cnt_columns);
+        for (size_t i = 0; i < cnt_columns; ++i) {
+            columns[i] = std::make_unique<ColumnIntegers<T>>(std::move(columns_data[i]));
+        }
+        Block block(std::move(columns));
+        tests.push_back({
+            .block = std::move(block),
+            .name = path,
+        });
+    }
+    return tests;
+}
+
 void TestAllBenchmarksWithAlgorithm(Tests tests, const IPermute& algorithm,
                                     const size_t iterations) {
     for (auto& [block, name] : tests) {
@@ -159,6 +194,46 @@ void TestAllSingleIntegersColumnTests(Path dir) {
         auto tests = GetAllSingleColumnTests<T>(dir);
         CompressionSorts::LexicographicSortPermute sort;
         TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 1);
+    }
+}
+
+template <std::integral T>
+void TestAllMannyIntegersColumnsTests(Path dir) {
+    // Just nothing
+    {
+        auto tests = GetAllFullAsIntegerTests<T>(dir);
+        CompressionSorts::IdentityPermute identity;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), identity, 1);
+    }
+    // Shuffle with big budget
+    {
+        auto tests = GetAllFullAsIntegerTests<T>(dir);
+        CompressionSorts::ShufflePermute shuffle(100ms);
+        TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 1);
+    }
+    // LocalOptimizations with big budget
+    {
+        auto tests = GetAllFullAsIntegerTests<T>(dir);
+        CompressionSorts::LocalOptimizationsPermute local_optimizations(100ms);
+        TestAllBenchmarksWithAlgorithm(std::move(tests), local_optimizations, 1);
+    }
+    // Just sort
+    {
+        auto tests = GetAllFullAsIntegerTests<T>(dir);
+        CompressionSorts::LexicographicSortPermute sort;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 1);
+    }
+    // Offline best order
+    {
+        auto tests = GetAllFullAsIntegerTests<T>(dir);
+        CompressionSorts::LexicographicSortOfflineColumnOrderPermute sort_offline_order;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), sort_offline_order, 1);
+    }
+    // Online best order
+    {
+        auto tests = GetAllFullAsIntegerTests<T>(dir);
+        CompressionSorts::LexicographicSortOnlineColumnOrderPermute sort_online_order;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), sort_online_order, 1);
     }
 }
 
@@ -205,7 +280,14 @@ void TestViaStrings(Path dir) {
 
 int main() {
     TestAllSingleIntegersColumnTests<int8_t>("tests_data/int/random_small");
+    TestAllMannyIntegersColumnsTests<int8_t>("tests_data/int/many_random_small");
     TestAllSingleIntegersColumnTests<int64_t>("tests_data/int/random_big");
     TestViaStrings("tests_data/clickhouse/hits");
     TestViaStrings("tests_data/english/dictionary");
+    TestViaStrings("tests_data/clickhouse/dish");
+    TestViaStrings("tests_data/clickhouse/menu");
+    TestViaStrings("tests_data/clickhouse/menu_item");
+    TestViaStrings("tests_data/clickhouse/menu_page");
+    TestViaStrings("tests_data/clickhouse/price_paid_transaction_data");
+    return EXIT_SUCCESS;
 }
