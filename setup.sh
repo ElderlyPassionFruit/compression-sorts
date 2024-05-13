@@ -39,3 +39,6 @@ cd ..
 
 # generate test batches
 ./bin/generate_tests_data
+
+# create directory for tests results
+mkdir tests_results

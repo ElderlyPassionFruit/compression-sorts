@@ -40,3 +40,4 @@ generator/downloads/
 .vscode/
 .venv/
 Testing/
+__pycache__
