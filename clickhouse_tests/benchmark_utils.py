@@ -11,7 +11,7 @@ def create_table(client, scheme, table_name, use_compression_optimization):
         {scheme}
     ) ENGINE = MergeTree()
     ORDER BY ()
-    SETTINGS allow_experimental_replacing_merge_with_cleanup={use_compression_optimization}
+    SETTINGS allow_experimental_improve_compression_rows_order={str(use_compression_optimization).lower()}
     """
 
     client.command(sql_create_table)
