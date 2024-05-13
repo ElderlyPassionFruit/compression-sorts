@@ -51,7 +51,8 @@ public:
                            Algorithms algorithm) const override {
         assert(range.from <= range.to);
         switch (algorithm) {
-            case Algorithms::LexicographicSort: {
+            case Algorithms::LexicographicSort:
+            case Algorithms::SuffixArrayGreedy: {
                 auto comparator = [&](size_t i, size_t j) { return data_[i] < data_[j]; };
                 auto begin = std::ranges::next(order.begin(), range.from);
                 auto end = std::ranges::next(order.begin(), range.to);

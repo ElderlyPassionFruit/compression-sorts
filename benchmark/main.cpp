@@ -12,6 +12,7 @@
 #include "compression_sorts/read_data.hpp"
 #include "compression_sorts/shuffle.hpp"
 #include "compression_sorts/statistics_saver.hpp"
+#include "compression_sorts/suffix_array_greedy.hpp"
 
 using namespace CompressionSorts;
 
@@ -274,6 +275,12 @@ void TestViaStrings(Path dir) {
         CompressionSorts::LexicographicSortOnlineColumnOrderPermute sort_online_order;
         TestAllBenchmarksWithAlgorithm(std::move(tests), sort_online_order, 1);
     }
+    // Suffix array based greedy
+    {
+        auto tests = GetAllFullAsStringsTests(dir);
+        CompressionSorts::SuffixArrayGreedyPermute suffix_array_greedy;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), suffix_array_greedy, 1);
+    }
 }
 
 }  // namespace
@@ -283,7 +290,7 @@ int main() {
     TestAllMannyIntegersColumnsTests<int8_t>("tests_data/int/many_random_small");
     TestAllSingleIntegersColumnTests<int64_t>("tests_data/int/random_big");
     TestViaStrings("tests_data/english/dictionary");
-    TestViaStrings("tests_data/clickhouse/hits");
+    // TestViaStrings("tests_data/clickhouse/hits");
     TestViaStrings("tests_data/clickhouse/dish");
     TestViaStrings("tests_data/clickhouse/menu");
     TestViaStrings("tests_data/clickhouse/menu_item");

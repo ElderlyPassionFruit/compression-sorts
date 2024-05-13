@@ -5,6 +5,7 @@ add_library(${target} STATIC
     src/lexicographic_sort.cpp
     src/local_optimizations.cpp
     src/shuffle.cpp
+    src/suffix_array_greedy.cpp
 )
 
 target_include_directories(${target} PUBLIC include)

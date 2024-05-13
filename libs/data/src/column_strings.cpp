@@ -1,5 +1,7 @@
 #include "compression_sorts/column_strings.hpp"
 
+#include <algorithm>
+#include <cstddef>
 #include <unordered_set>
 
 #include "compression_sorts/lz4.hpp"
@@ -7,8 +9,32 @@
 #include "compression_sorts/range.hpp"
 #include "compression_sorts/serialize_data.hpp"
 #include "compression_sorts/stupid_compression_calculator.hpp"
+#include "compression_sorts/suffix_array.hpp"
 
 namespace CompressionSorts {
+
+namespace {
+
+void SuffixArrayGreedyPermuteImpl(const std::vector<std::string>& data, std::vector<size_t>& order,
+                                  const Range& range) {
+    std::vector<std::string> to_order(range.Size());
+
+    for (size_t i = range.from; i < range.to; ++i) {
+        to_order[i - range.from] = data[order[i]];
+    }
+
+    auto current_order = GetSuffixArrayGreedyOrder(to_order);
+
+    for (size_t i = 0; i < current_order.size(); ++i) {
+        current_order[i] = order[current_order[i] + range.from];
+    }
+
+    for (size_t i = range.from; i < range.to; ++i) {
+        order[i] = current_order[i - range.from];
+    }
+}
+
+}  // namespace
 
 ColumnStrings::ColumnStrings(ColumnStrings::Container data) : data_(std::move(data)) {
 }
@@ -44,12 +70,19 @@ size_t ColumnStrings::CalculateDistinctValuesInRange(const Range& range) const {
 void ColumnStrings::UpdatePermutation(std::vector<size_t>& order, const Range& range,
                                       Algorithms algorithm) const {
     assert(range.from <= range.to);
+    if (range.Size() <= 1ULL) {
+        return;
+    }
     switch (algorithm) {
         case Algorithms::LexicographicSort: {
             auto comparator = [&](size_t i, size_t j) { return data_[i] < data_[j]; };
             auto begin = std::ranges::next(order.begin(), range.from);
             auto end = std::ranges::next(order.begin(), range.to);
             std::sort(begin, end, comparator);
+            break;
+        }
+        case Algorithms::SuffixArrayGreedy: {
+            SuffixArrayGreedyPermuteImpl(data_, order, range);
             break;
         }
     }
