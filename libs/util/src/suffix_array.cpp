@@ -1,5 +1,6 @@
 #include "compression_sorts/suffix_array.hpp"
 
+// #include <iostream>
 #include <numeric>
 #include <set>
 
@@ -145,6 +146,11 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
         total_string += delimiter;
     }
 
+    // std::cerr << "GetSuffixArrayGreedyOrder - estimated_size: " << estimated_size
+    //           << " delimiter: " << static_cast<int>(delimiter) << " data.size() = " <<
+    //           data.size()
+    //           << std::endl;
+
     assert(total_string.size() == estimated_size);
 
     std::vector<size_t> string_ids;
@@ -170,7 +176,7 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
         if (i > j) {
             std::swap(i, j);
         }
-        return sparse_table.get(i, j);
+        return sparse_table.get(i, j - 1);
     };
 
     std::set<size_t> alive;
@@ -193,10 +199,17 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
 
     constexpr int64_t checked_suffix = 1;
 
-    std::vector<size_t> order(data.size());
+    std::vector<size_t> order(data.size(), -1);
+
+    std::vector<bool> used(order.size(), false);
+    size_t next_not_used = 0;
 
     for (int64_t i = 0; i < order.size(); ++i) {
-        int64_t best = 0;
+        while (next_not_used < order.size() && used[next_not_used]) {
+            ++next_not_used;
+        }
+        assert(next_not_used < order.size());
+        int64_t best = next_not_used;
         int64_t score = -1;
 
         auto try_update = [&](size_t id, size_t pos_sa) {
@@ -223,10 +236,13 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
                 }
             }
         }
+        assert(!used[best]);
+        used[best] = true;
         clear_alive(best);
         order[i] = best;
     }
 
+    assert(IsPermutation(order));
     return order;
 }
 
