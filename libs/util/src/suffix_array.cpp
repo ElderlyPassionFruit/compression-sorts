@@ -1,10 +1,10 @@
 #include "compression_sorts/suffix_array.hpp"
 
-#include <iostream>
 #include <numeric>
 #include <set>
 
 #include "compression_sorts/permutation.hpp"
+#include "compression_sorts/sparse_table.hpp"
 
 namespace CompressionSorts {
 
@@ -134,11 +134,6 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
                 std::min(delimiter, static_cast<char>(*std::min_element(s.begin(), s.end()) - 1));
         }
     }
-    for (auto i : data)
-        for (auto j : i)
-            assert(j > delimiter);
-    std::cerr << "SuffixArrayGreedyPermuteImpl: choose delimiter = " << static_cast<int>(delimiter)
-              << std::endl;
     for (size_t i = 0; i + 1 < data.size(); ++i) {
         prefix_sizes[i + 1] = prefix_sizes[i] + data[i].size();
     }
@@ -149,6 +144,7 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
         total_string += s;
         total_string += delimiter;
     }
+
     assert(total_string.size() == estimated_size);
 
     std::vector<size_t> string_ids;
@@ -167,12 +163,14 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
 
     const auto lcp_array = BuildLCPArray(total_string, suffix_array);
 
-    auto calc_lcp = [&lcp_array](size_t i, size_t j) -> int {
+    const auto sparse_table = SparseTable(lcp_array, [](int i, int j) { return std::min(i, j); });
+
+    auto calc_lcp = [&sparse_table](size_t i, size_t j) -> int {
         assert(i != j);
         if (i > j) {
             std::swap(i, j);
         }
-        return *std::min_element(lcp_array.begin() + i, lcp_array.begin() + j);
+        return sparse_table.get(i, j);
     };
 
     std::set<size_t> alive;
