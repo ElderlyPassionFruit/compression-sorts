@@ -2,6 +2,7 @@ asttokens==2.4.1
 certifi==2024.2.2
 charset-normalizer==3.3.2
 clickhouse-connect==0.7.8
+clickhouse-driver==0.2.7
 comm==0.2.2
 contourpy==1.2.1
 cycler==0.12.1
@@ -45,6 +46,7 @@ tornado==6.4
 traitlets==5.14.3
 typing_extensions==4.11.0
 tzdata==2024.1
+tzlocal==5.2
 urllib3==2.2.1
 wcwidth==0.2.13
 zstandard==0.22.0
