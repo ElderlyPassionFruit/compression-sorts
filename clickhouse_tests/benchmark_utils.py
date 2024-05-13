@@ -37,7 +37,7 @@ def insert_data(client, table_name, data):
     insert_query = f"INSERT INTO {table_name} FORMAT CSV " + data
     client.command(insert_query)
     cnt_lines = len(data.split('\n'))
-    print(f"Data inserted into '{table_name}' successfully. raws: {cnt_lines}")
+    print(f"Data inserted into '{table_name}' successfully. rows: {cnt_lines}")
 
 def calc_size(client, table_name):
     calc_size_query = f"""

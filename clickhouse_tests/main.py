@@ -41,7 +41,7 @@ if __name__ == '__main__':
     results.extend(test_with_equal_type(Path("tests_data/clickhouse/menu_page"), "String", 7))
     results.extend(test_with_equal_type(Path("tests_data/clickhouse/hits"), "String", 105))
 
-    kClickhouseTestScheme = "name,raws,columns,size,use_compression_optimization"
+    kClickhouseTestScheme = "name,rows,columns,size,use_compression_optimization"
 
     with open("tests_results/clickhouse_tests.csv", "w") as f:
         print(kClickhouseTestScheme, file = f)

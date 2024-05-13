@@ -49,7 +49,7 @@ BenchmarkResults TestAlgorithm(const std::string& test_name, Block block, const 
     benchmark_results.name = test_name;
     benchmark_results.algorithm_name = algorithm.GetName();
 
-    benchmark_results.raws = block.GetSize();
+    benchmark_results.rows = block.GetSize();
     benchmark_results.columns = block.GetData().size();
 
     benchmark_results.initial_score = CalculateCompressionScore(block);

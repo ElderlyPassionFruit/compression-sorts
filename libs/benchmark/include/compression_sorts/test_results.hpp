@@ -26,7 +26,7 @@ struct TestResults {
 struct BenchmarkResults {
     std::string name;
     std::string algorithm_name;
-    size_t raws = 0;
+    size_t rows = 0;
     size_t columns = 0;
 
     CompressionScore initial_score{};

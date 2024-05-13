@@ -12,7 +12,7 @@ namespace {
 
 static const std::string kTestsInfoScheme =
     "name,"
-    "raws,"
+    "rows,"
     "columns,"
     "serialized_size,"
     "compressed_size,"
@@ -47,7 +47,7 @@ public:
         if (!used_tests.contains(benchmark_results.name)) {
             used_tests.insert(benchmark_results.name);
             const auto& score = benchmark_results.initial_score;
-            tests_info_out << benchmark_results.name << "," << benchmark_results.raws << ","
+            tests_info_out << benchmark_results.name << "," << benchmark_results.rows << ","
                            << benchmark_results.columns << "," << score.serialized_size << ","
                            << score.compressed_size << "," << score.compression_time_ns.count()
                            << "," << score.decompression_time_ns.count() << std::endl;
