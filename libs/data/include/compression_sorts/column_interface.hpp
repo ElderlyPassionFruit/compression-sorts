@@ -10,6 +10,7 @@ namespace CompressionSorts {
 
 enum class Algorithms {
     LexicographicSort,
+    SuffixArrayGreedy,
 };
 
 struct IColumn {

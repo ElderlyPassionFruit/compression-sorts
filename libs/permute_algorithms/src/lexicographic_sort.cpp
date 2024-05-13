@@ -10,13 +10,6 @@ namespace CompressionSorts {
 
 namespace {
 
-void AddRanges(EqualRanges& equal_ranges, EqualRanges new_equal_ranges) {
-    equal_ranges.reserve(equal_ranges.size() + new_equal_ranges.size());
-    for (const auto& range : new_equal_ranges) {
-        equal_ranges.push_back(range);
-    }
-}
-
 void UpdateUniqueElementsOrder(const Block::Container& columns, size_t from, Range range,
                                std::vector<size_t>& columns_order) {
     std::vector<size_t> unique_elements(columns.size());
