@@ -12,6 +12,8 @@ struct Range {
     size_t to;
 
     bool operator==(const Range& other) const;
+
+    size_t Size() const;
 };
 
 using EqualRanges = std::vector<Range>;
@@ -32,5 +34,7 @@ EqualRanges GetEqualRanges(const std::vector<T>& data, const std::vector<size_t>
     }
     return equal_ranges;
 }
+
+void AddRanges(EqualRanges& equal_ranges, EqualRanges new_equal_ranges);
 
 }  // namespace CompressionSorts
