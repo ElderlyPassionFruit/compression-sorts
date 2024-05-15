@@ -3,13 +3,13 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
-#include <limits>
 #include <random>
 #include <string>
 #include <vector>
 
 #include "compression_sorts/path.hpp"
 #include "compression_sorts/read_data.hpp"
+#include "compression_sorts/split.hpp"
 
 std::mt19937_64 rnd(179);
 
@@ -59,16 +59,22 @@ void GenerateTests(CompressionSorts::Path dir, const std::vector<size_t>& tests_
 }
 
 void GenerateSplitBatches(CompressionSorts::Path dir, const std::vector<size_t>& batches,
-                          CompressionSorts::Path path_in) {
+                          CompressionSorts::Path path_in, size_t cnt_columns) {
     std::ifstream in(path_in);
     in.tie(0);
 
-    auto raw_generator = [&in](size_t /*raw*/) -> std::string {
+    auto raw_generator = [&in, cnt_columns](size_t /*raw*/) -> std::string {
         std::string buffer;
-        if (!getline(in, buffer)) {
-            throw std::runtime_error("GenerateSplitBatches - Too small tests file");
+        while (getline(in, buffer)) {
+            if (CompressionSorts::SplitBySymbol(buffer, ',').size() != cnt_columns) {
+                std::cerr << "WARNING! Raw size = "
+                          << CompressionSorts::SplitBySymbol(buffer, ',').size()
+                          << " and != " << cnt_columns << std::endl;
+                continue;
+            }
+            return buffer;
         }
-        return buffer;
+        throw std::runtime_error("GenerateSplitBatches - Too small tests file");
     };
 
     GenerateTests(dir, batches, raw_generator);
@@ -136,7 +142,8 @@ int main() {
     {
         constexpr size_t kMaxBatchSize = 100000;
         const auto batches = GenBatches(kMaxBatchSize, 1.2);
-        GenerateSplitBatches("tests_data/clickhouse/hits", batches, "generator/downloads/hits.csv");
+        GenerateSplitBatches("tests_data/clickhouse/hits", batches, "generator/downloads/hits.csv",
+                             105);
     }
 
     // dictionary
@@ -152,19 +159,21 @@ int main() {
         constexpr size_t kMaxBatchSize = 100000;
         const auto batches = GenBatches(kMaxBatchSize, 1.2);
         GenerateSplitBatches("tests_data/clickhouse/price_paid_transaction_data", batches,
-                             "generator/downloads/price_paid_transaction_data.csv");
+                             "generator/downloads/price_paid_transaction_data.csv", 16);
     }
 
     // "What's on the Menu?"
     {
         constexpr size_t kMaxBatchSize = 1000;
         const auto batches = GenBatches(kMaxBatchSize, 1.2);
-        GenerateSplitBatches("tests_data/clickhouse/dish", batches, "generator/downloads/Dish.csv");
-        GenerateSplitBatches("tests_data/clickhouse/menu", batches, "generator/downloads/Menu.csv");
+        GenerateSplitBatches("tests_data/clickhouse/dish", batches, "generator/downloads/Dish.csv",
+                             9);
+        GenerateSplitBatches("tests_data/clickhouse/menu", batches, "generator/downloads/Menu.csv",
+                             20);
         GenerateSplitBatches("tests_data/clickhouse/menu_item", batches,
-                             "generator/downloads/MenuItem.csv");
+                             "generator/downloads/MenuItem.csv", 9);
         GenerateSplitBatches("tests_data/clickhouse/menu_page", batches,
-                             "generator/downloads/MenuPage.csv");
+                             "generator/downloads/MenuPage.csv", 7);
     }
 
     return EXIT_SUCCESS;
