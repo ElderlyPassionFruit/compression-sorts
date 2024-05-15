@@ -79,6 +79,18 @@ public:
         return data_;
     }
 
+    int Compare(size_t lhs, size_t rhs) const override {
+        assert(lhs < data_.size());
+        assert(rhs < data_.size());
+        if (data_[lhs] < data_[rhs]) {
+            return -1;
+        } else if (data_[lhs] == data_[rhs]) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
 private:
     Container data_;
 };

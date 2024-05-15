@@ -9,6 +9,7 @@
 #include "compression_sorts/identity.hpp"
 #include "compression_sorts/lexicographic_sort.hpp"
 #include "compression_sorts/local_optimizations.hpp"
+#include "compression_sorts/multiple_lists.hpp"
 #include "compression_sorts/read_data.hpp"
 #include "compression_sorts/shuffle.hpp"
 #include "compression_sorts/statistics_saver.hpp"
@@ -236,6 +237,12 @@ void TestAllMannyIntegersColumnsTests(Path dir) {
         CompressionSorts::LexicographicSortOnlineColumnOrderPermute sort_online_order;
         TestAllBenchmarksWithAlgorithm(std::move(tests), sort_online_order, 1);
     }
+    // Multiple lists
+    {
+        auto tests = GetAllFullAsIntegerTests<T>(dir);
+        CompressionSorts::MultipleListsPermute multiple_lists;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), multiple_lists, 1);
+    }
 }
 
 void TestViaStrings(Path dir) {
@@ -280,6 +287,12 @@ void TestViaStrings(Path dir) {
         auto tests = GetAllFullAsStringsTests(dir);
         CompressionSorts::SuffixArrayGreedyPermute suffix_array_greedy;
         TestAllBenchmarksWithAlgorithm(std::move(tests), suffix_array_greedy, 1);
+    }
+    // Multiple lists
+    {
+        auto tests = GetAllFullAsStringsTests(dir);
+        CompressionSorts::MultipleListsPermute multiple_lists;
+        TestAllBenchmarksWithAlgorithm(std::move(tests), multiple_lists, 1);
     }
 }
 

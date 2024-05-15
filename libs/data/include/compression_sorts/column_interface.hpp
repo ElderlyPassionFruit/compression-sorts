@@ -30,6 +30,9 @@ struct IColumn {
 
     virtual OnlineCompressionCalculatorPtr GetOnlineCompressionCalculator() const = 0;
     virtual std::vector<char> GetSerializedData() const = 0;
+
+    // -1 - <, 0 - =, 1 - >
+    virtual int Compare(size_t /*lhs*/, size_t /*rhs*/) const = 0;
 };
 
 using ColumnPtr = std::unique_ptr<IColumn>;
