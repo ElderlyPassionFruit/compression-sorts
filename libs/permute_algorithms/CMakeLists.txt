@@ -4,6 +4,7 @@ add_library(${target} STATIC
     src/identity.cpp
     src/lexicographic_sort.cpp
     src/local_optimizations.cpp
+    src/multiple_lists.cpp
     src/shuffle.cpp
     src/suffix_array_greedy.cpp
 )

@@ -22,6 +22,8 @@ public:
                                const Range& /*range*/) const override;
     std::vector<char> GetSerializedData() const override;
 
+    int Compare(size_t /*lhs*/, size_t /*rhs*/) const override;
+
 private:
     Container data_;
 };
