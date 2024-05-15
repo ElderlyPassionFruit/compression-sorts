@@ -7,6 +7,7 @@ add_library(${target} STATIC
     src/range.cpp
     src/read_data.cpp
     src/serialize_data.cpp
+    src/split.cpp
     src/suffix_array.cpp
     src/time.cpp
 )

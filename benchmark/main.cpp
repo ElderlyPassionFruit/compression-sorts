@@ -12,6 +12,7 @@
 #include "compression_sorts/multiple_lists.hpp"
 #include "compression_sorts/read_data.hpp"
 #include "compression_sorts/shuffle.hpp"
+#include "compression_sorts/split.hpp"
 #include "compression_sorts/statistics_saver.hpp"
 #include "compression_sorts/suffix_array_greedy.hpp"
 
@@ -59,41 +60,6 @@ Tests GetAllSingleColumnTests(Path dir) {
         });
     }
     return tests;
-}
-
-std::vector<std::string> SplitBySymbol(std::string s, char delimiter) {
-    std::vector<std::string> result;
-    std::string current;
-    size_t cnt_bad = 0;
-    for (const char c : s) {
-        if (c == '\"') {
-            ++cnt_bad;
-        }
-        if (c == delimiter && cnt_bad % 2 == 0) {
-            result.push_back(current);
-            current = "";
-        } else {
-            current += c;
-        }
-    }
-    result.push_back(current);
-    return result;
-}
-
-std::vector<std::vector<std::string>> SplitAllStrings(std::vector<std::string> data,
-                                                      char delimiter) {
-    std::vector<std::vector<std::string>> result;
-    result.reserve(data.size());
-    for (size_t i = 0; i < data.size(); ++i) {
-        auto current = SplitBySymbol(std::move(data[i]), delimiter);
-        if (!result.empty() && (current.size() != result.back().size())) {
-            std::cerr << "WARNING: Incorrect sizes " << current.size() << " "
-                      << result.back().size() << std::endl;
-            continue;
-        }
-        result.push_back(std::move(current));
-    }
-    return result;
 }
 
 std::vector<std::vector<std::string>> Transpose(std::vector<std::vector<std::string>> data) {
