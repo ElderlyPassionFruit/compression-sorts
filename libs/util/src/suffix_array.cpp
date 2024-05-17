@@ -164,6 +164,13 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
         ++pos;
     }
 
+    std::vector<int> max_length(estimated_size, 0);
+    for (size_t i = estimated_size; i > 0; --i) {
+        if (total_string[i - 1] != delimiter) {
+            max_length[i - 1] = max_length[i] + 1;
+        }
+    }
+
     const auto suffix_array = BuildSuffixArray(total_string);
     const auto inverse_suffix_array = GetInversePermutation(suffix_array);
 
@@ -171,12 +178,13 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
 
     const auto sparse_table = SparseTable(lcp_array, [](int i, int j) { return std::min(i, j); });
 
-    auto calc_lcp = [&sparse_table](size_t i, size_t j) -> int {
+    auto calc_lcp = [&sparse_table, &inverse_suffix_array, &max_length](size_t i, size_t j) -> int {
         assert(i != j);
         if (i > j) {
             std::swap(i, j);
         }
-        return sparse_table.get(i, j - 1);
+        return std::min<int>({sparse_table.get(i, j - 1), max_length[inverse_suffix_array[i]],
+                              max_length[inverse_suffix_array[j]]});
     };
 
     std::set<size_t> alive;
