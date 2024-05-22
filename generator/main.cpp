@@ -11,6 +11,8 @@
 #include "compression_sorts/read_data.hpp"
 #include "compression_sorts/split.hpp"
 
+namespace {
+
 std::mt19937_64 rnd(179);
 
 std::vector<size_t> GenBatches(size_t max_batch_size, double exponent) {
@@ -93,6 +95,8 @@ void GenerateRandomPrefixBatches(CompressionSorts::Path dir, const std::vector<s
 
     GenerateTests(dir, batches, raw_generator);
 }
+
+}  // namespace
 
 int main() {
     // random small integers
