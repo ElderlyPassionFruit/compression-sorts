@@ -2,10 +2,6 @@
 
 #include <vector>
 
-#include "path.hpp"
+#include "filesystem.hpp"
 
-namespace CompressionSorts {
-
-std::vector<Path> GetAllFiles(Path /*dir*/);
-
-}  // namespace CompressionSorts
+namespace CompressionSorts {}  // namespace CompressionSorts

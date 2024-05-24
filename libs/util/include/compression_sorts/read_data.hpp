@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "compression_sorts/path.hpp"
+#include "compression_sorts/filesystem.hpp"
 
 namespace CompressionSorts {
 
