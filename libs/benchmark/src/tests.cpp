@@ -12,17 +12,20 @@
 
 namespace CompressionSorts {
 
+#define REGISTER_ALGORITHM(Type, ...) \
+    (algorithms).push_back(std::make_unique<const Type>(__VA_ARGS__));
+
 template <std::integral T>
 void TestAllSingleIntegersColumnTests(Path dir) {
     std::vector<IPermutePtr> algorithms;
     // Just nothing
-    algorithms.push_back(std::make_unique<IdentityPermute>());
+    REGISTER_ALGORITHM(IdentityPermute);
     // Shuffle with big budget
-    algorithms.push_back(std::make_unique<ShufflePermute>(100ms));
+    REGISTER_ALGORITHM(ShufflePermute, 100ms);
     // LocalOptimizations with big budget
-    algorithms.push_back(std::make_unique<LocalOptimizationsPermute>(100ms));
+    REGISTER_ALGORITHM(LocalOptimizationsPermute, 100ms);
     // Just sort
-    algorithms.push_back(std::make_unique<LexicographicSortPermute>());
+    REGISTER_ALGORITHM(LexicographicSortPermute);
 
     ColumnParser parser(GenericColumnParser<ColumnIntegers<T>>);
     TestAllBenchmarksWithAlgorithms(dir, parser, algorithms, 1);
@@ -36,19 +39,19 @@ void TestAllManyIntegersColumnsTests(Path dir) {
     std::vector<IPermutePtr> algorithms;
 
     // Just nothing
-    algorithms.push_back(std::make_unique<IdentityPermute>());
+    REGISTER_ALGORITHM(IdentityPermute);
     // Shuffle with big budget
-    algorithms.push_back(std::make_unique<ShufflePermute>(100ms));
+    REGISTER_ALGORITHM(ShufflePermute, 100ms);
     // LocalOptimizations with big budget
-    algorithms.push_back(std::make_unique<LocalOptimizationsPermute>(100ms));
+    REGISTER_ALGORITHM(LocalOptimizationsPermute, 100ms);
     // Just sort
-    algorithms.push_back(std::make_unique<LexicographicSortPermute>());
+    REGISTER_ALGORITHM(LexicographicSortPermute);
     // Offline best order
-    algorithms.push_back(std::make_unique<LexicographicSortOfflineColumnOrderPermute>());
+    REGISTER_ALGORITHM(LexicographicSortOfflineColumnOrderPermute);
     // Online best order
-    algorithms.push_back(std::make_unique<LexicographicSortOnlineColumnOrderPermute>());
+    REGISTER_ALGORITHM(LexicographicSortOnlineColumnOrderPermute);
     // Multiple lists
-    algorithms.push_back(std::make_unique<MultipleListsPermute>());
+    REGISTER_ALGORITHM(MultipleListsPermute);
 
     ColumnParser parser(GenericColumnParser<ColumnIntegers<T>>);
     TestAllBenchmarksWithAlgorithms(dir, parser, algorithms, 1);
@@ -61,21 +64,21 @@ void TestViaStrings(Path dir) {
     std::vector<IPermutePtr> algorithms;
 
     // Just nothing
-    algorithms.push_back(std::make_unique<IdentityPermute>());
+    REGISTER_ALGORITHM(IdentityPermute);
     // Shuffle with big budget
-    algorithms.push_back(std::make_unique<ShufflePermute>(100ms));
+    REGISTER_ALGORITHM(ShufflePermute, 100ms);
     // LocalOptimizations with big budget
-    algorithms.push_back(std::make_unique<LocalOptimizationsPermute>(100ms));
+    REGISTER_ALGORITHM(LocalOptimizationsPermute, 100ms);
     // Just sort
-    algorithms.push_back(std::make_unique<LexicographicSortPermute>());
+    REGISTER_ALGORITHM(LexicographicSortPermute);
     // Offline best order
-    algorithms.push_back(std::make_unique<LexicographicSortOfflineColumnOrderPermute>());
+    REGISTER_ALGORITHM(LexicographicSortOfflineColumnOrderPermute);
     // Online best order
-    algorithms.push_back(std::make_unique<LexicographicSortOnlineColumnOrderPermute>());
+    REGISTER_ALGORITHM(LexicographicSortOnlineColumnOrderPermute);
     // Suffix array based greedy
-    algorithms.push_back(std::make_unique<SuffixArrayGreedyPermute>());
+    REGISTER_ALGORITHM(SuffixArrayGreedyPermute);
     // Multiple lists
-    algorithms.push_back(std::make_unique<MultipleListsPermute>());
+    REGISTER_ALGORITHM(MultipleListsPermute);
 
     ColumnParser parser(GenericColumnParser<ColumnStrings>);
     TestAllBenchmarksWithAlgorithms(dir, parser, algorithms, 1);
