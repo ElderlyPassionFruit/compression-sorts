@@ -86,16 +86,16 @@ std::vector<int> suffix_array(const T &s, int char_bound) {
 }
 
 template <typename T>
-std::vector<int> build_lcp(int n, const T &s, const std::vector<int> &sa) {
+std::vector<size_t> build_lcp(int n, const T &s, const std::vector<int> &sa) {
     assert((int)sa.size() == n);
     std::vector<int> pos(n);
     for (int i = 0; i < n; i++) {
         pos[sa[i]] = i;
     }
-    std::vector<int> lcp(std::max(n - 1, 0));
-    int k = 0;
+    std::vector<size_t> lcp(std::max(n - 1, 0));
+    size_t k = 0;
     for (int i = 0; i < n; i++) {
-        k = std::max(k - 1, 0);
+        k = k == 0 ? 0 : k - 1;
         if (pos[i] == n - 1) {
             k = 0;
         } else {
@@ -110,7 +110,7 @@ std::vector<int> build_lcp(int n, const T &s, const std::vector<int> &sa) {
 }
 
 template <typename T>
-std::vector<int> build_lcp(const T &s, const std::vector<int> &sa) {
+std::vector<size_t> build_lcp(const T &s, const std::vector<int> &sa) {
     return build_lcp((int)s.size(), s, sa);
 }
 
@@ -121,7 +121,7 @@ std::vector<size_t> BuildSuffixArray(const std::string &s) {
     return {sa.begin(), sa.end()};
 }
 
-std::vector<int> BuildLCPArray(const std::string &s, const std::vector<size_t> &sa) {
+std::vector<size_t> BuildLCPArray(const std::string &s, const std::vector<size_t> &sa) {
     return build_lcp(s, {sa.begin(), sa.end()});
 }
 
@@ -158,7 +158,7 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
         ++pos;
     }
 
-    std::vector<int> max_length(estimated_size, 0);
+    std::vector<size_t> max_length(estimated_size, 0);
     for (size_t i = estimated_size; i > 0; --i) {
         if (total_string[i - 1] != delimiter) {
             max_length[i - 1] = max_length[i] + 1;
@@ -172,13 +172,13 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
 
     const auto sparse_table = SparseTable(lcp_array, [](int i, int j) { return std::min(i, j); });
 
-    auto calc_lcp = [&sparse_table, &inverse_suffix_array, &max_length](size_t i, size_t j) -> int {
+    auto calc_lcp = [&sparse_table, &inverse_suffix_array, &max_length](size_t i, size_t j) {
         assert(i != j);
         if (i > j) {
             std::swap(i, j);
         }
-        return std::min<int>({sparse_table.get(i, j - 1), max_length[inverse_suffix_array[i]],
-                              max_length[inverse_suffix_array[j]]});
+        return std::min({sparse_table.get(i, j - 1), max_length[inverse_suffix_array[i]],
+                         max_length[inverse_suffix_array[j]]});
     };
 
     std::set<size_t> alive;
