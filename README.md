@@ -42,7 +42,7 @@ There are two benchmarks in project.
 
 ### On your own hardware
 
-First, run the benchmarks from the previous paragraph. After that, tables with test results (in .csv format) will be located in the tests_results directory.
+First, run the benchmarks from the previous paragraph. After that, tables with tests results (in **.csv** format) will be located in the **tests_results** directory.
 
 Fill free to use [research.ipynb](research.ipynb) jupyter notebook. 
 
