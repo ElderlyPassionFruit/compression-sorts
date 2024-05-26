@@ -40,11 +40,19 @@ There are two benchmarks in project.
 
 ## How can you look at the test results?
 
+### On your own hardware
+
+First, run the benchmarks from the previous paragraph. After that, tables with test results (in .csv format) will be located in the tests_results directory.
+
 Fill free to use [research.ipynb](research.ipynb) jupyter notebook. 
 
 If you just execute both benchmarks and after that execute **Run All**, the program will draw many graphs showing the current efficiency of the algorithms on various tests.
 
-Also you can look at the test results on my hardware, they are in the [research_with_results](https://github.com/ElderlyPassionFruit/compression-sorts/tree/research-with-results) branch, in the notebook **research.ipynb** and in the **tests_results** directory.
+### On my hardware
+
+You can also look at the results of tests performed on my hardware. 
+
+They are in [research_with_results](https://github.com/ElderlyPassionFruit/compression-sorts/tree/research-with-results) branch, in the notebook **research.ipynb** and in the **tests_results** directory.
 
 Characteristics of my hardware:
 
