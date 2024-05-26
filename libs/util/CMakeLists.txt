@@ -2,7 +2,6 @@ set(target compression_sorts_util)
 
 add_library(${target} STATIC
     src/filesystem.cpp
-    src/generator.cpp
     src/lz4.cpp
     src/permutation.cpp
     src/random.cpp

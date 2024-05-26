@@ -1,4 +1,4 @@
-#include "compression_sorts/generator.hpp"
+#include "compression_sorts/generators.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -10,20 +10,19 @@
 
 namespace CompressionSorts {
 
-std::vector<size_t> GenerateBatches(BatchesSettings batches_settings) {
-    std::vector<size_t> batches;
-    for (size_t new_batch_size = 1; new_batch_size <= batches_settings.max_batch_size;
-         new_batch_size =
-             new_batch_size < batches_settings.max_batch_size
-                 ? std::min<size_t>(batches_settings.max_batch_size,
-                                    ceil(batches_settings.exponent * new_batch_size))
-                 : static_cast<size_t>(ceil(batches_settings.exponent * new_batch_size))) {
-        batches.push_back(new_batch_size);
-    }
-    return batches;
+RawGenerator GetIntegersRawGenerator(int64_t min, int64_t max, size_t columns) {
+    std::uniform_int_distribution<int64_t> distribution(min, max);
+    return [distribution, columns](size_t /*row*/) mutable -> std::string {
+        std::stringstream buffer;
+        for (size_t i = 0; i < columns; ++i) {
+            if (i > 0) {
+                buffer << ',';
+            }
+            buffer << distribution(GetTwister());
+        }
+        return buffer.str();
+    };
 }
-
-using RawGenerator = std::function<std::string(size_t)>;
 
 void GenerateTest(CompressionSorts::Path dir, size_t test_size, RawGenerator raw_generator) {
     std::cerr << "GenerateTest -" << " dir: " << dir << " test_size: " << test_size << std::endl;

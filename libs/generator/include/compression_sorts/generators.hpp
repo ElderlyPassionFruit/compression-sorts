@@ -1,19 +1,16 @@
 #pragma once
 
 #include <functional>
+#include <string>
 
+#include "batches.hpp"
 #include "compression_sorts/filesystem.hpp"
 
 namespace CompressionSorts {
 
-struct BatchesSettings {
-    size_t max_batch_size;
-    double exponent;
-};
-
-std::vector<size_t> GenerateBatches(BatchesSettings /*settings*/);
-
 using RawGenerator = std::function<std::string(size_t)>;
+
+RawGenerator GetIntegersRawGenerator(int64_t /*min*/, int64_t /*max*/, size_t /*columns*/);
 
 void GenerateTest(CompressionSorts::Path /*dir*/, size_t /*test_size*/,
                   RawGenerator /*raw_generator*/);

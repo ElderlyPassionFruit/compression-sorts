@@ -1,5 +1,5 @@
-#include "compression_sorts/generator.hpp"
-#include "compression_sorts/random.hpp"
+#include "compression_sorts/batches.hpp"
+#include "compression_sorts/generators.hpp"
 
 int main() {
     using namespace CompressionSorts;
@@ -7,7 +7,7 @@ int main() {
     // random small integers
     {
         constexpr BatchesSettings batches_settings{.max_batch_size = 1'000'000, .exponent = 1.2};
-        RawGenerator raw_generator = GetIntegersGenerator(-100, 100, 1);
+        RawGenerator raw_generator = GetIntegersRawGenerator(-100, 100, 1);
         GenerateTests("tests_data/int/random_small", batches_settings, raw_generator);
     }
 
@@ -17,15 +17,15 @@ int main() {
         constexpr size_t kMaxBatchSize = 1'000'000 / kCntSmallIntegerColumns;
         constexpr BatchesSettings batches_settings{.max_batch_size = kMaxBatchSize,
                                                    .exponent = 1.2};
-        RawGenerator raw_generator = GetIntegersGenerator(-100, 100, kCntSmallIntegerColumns);
+        RawGenerator raw_generator = GetIntegersRawGenerator(-100, 100, kCntSmallIntegerColumns);
         GenerateTests("tests_data/int/many_random_small", batches_settings, raw_generator);
     }
 
     // random big integers
     {
         constexpr BatchesSettings batches_settings{.max_batch_size = 1'000'000, .exponent = 1.2};
-        RawGenerator raw_generator = GetIntegersGenerator(std::numeric_limits<int64_t>::min(),
-                                                          std::numeric_limits<int64_t>::max(), 1);
+        RawGenerator raw_generator = GetIntegersRawGenerator(
+            std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max(), 1);
         GenerateTests("tests_data/int/random_big", batches_settings, raw_generator);
     }
 
