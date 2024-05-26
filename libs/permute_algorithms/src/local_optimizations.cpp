@@ -45,8 +45,8 @@ void LocalOptimizationsPermute::GetPermutation(const Block& block,
         }
         ++iterations;
     }
-    std::cerr << "LocalOptimizationsPermute: size = " << order.size()
-              << " iterations = " << iterations << " improve_iterations = " << improve_iterations
+    std::cerr << "LocalOptimizationsPermute::GetPermutation - size: " << order.size()
+              << ", iterations: " << iterations << ", improve_iterations: " << improve_iterations
               << std::endl;
 }
 

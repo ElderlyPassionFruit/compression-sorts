@@ -25,7 +25,7 @@ RawGenerator GetIntegersRawGenerator(int64_t min, int64_t max, size_t columns) {
 }
 
 void GenerateTest(CompressionSorts::Path dir, size_t test_size, RawGenerator raw_generator) {
-    std::cerr << "GenerateTest -" << " dir: " << dir << " test_size: " << test_size << std::endl;
+    std::cerr << "GenerateTest - " << "dir: " << dir << ", test_size: " << test_size << std::endl;
     const auto path = dir / (std::to_string(test_size) + ".csv");
     std::vector<std::string> test(test_size);
     for (size_t raw = 0; raw < test_size; ++raw) {
@@ -52,10 +52,10 @@ void GenerateSplitBatches(CompressionSorts::Path dir, BatchesSettings batches_se
     auto raw_generator = [&in, cnt_columns](size_t /*raw*/) -> std::string {
         std::string buffer;
         while (getline(in, buffer)) {
-            if (CompressionSorts::SplitBySymbol(buffer, ',').size() != cnt_columns) {
-                std::cerr << "WARNING! Raw size = "
-                          << CompressionSorts::SplitBySymbol(buffer, ',').size()
-                          << " and != " << cnt_columns << std::endl;
+            size_t current_cnt_columns = CompressionSorts::SplitBySymbol(buffer, ',').size();
+            if (current_cnt_columns != cnt_columns) {
+                std::cerr << "GenerateSplitBatches - current_cnt_columns: " << current_cnt_columns
+                          << ", cnt_columns: " << cnt_columns << std::endl;
                 continue;
             }
             return buffer;

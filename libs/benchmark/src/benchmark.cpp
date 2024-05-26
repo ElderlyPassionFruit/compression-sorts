@@ -78,7 +78,8 @@ void TestAllBenchmarksWithAlgorithms(Path dir, ColumnParser parser,
     for (const Path& path : paths) {
         auto data = ReadLines(path);
         for (const auto& algorithm : algorithms) {
-            std::cerr << "name: " << path << " algorithm: " << algorithm->GetName() << std::endl;
+            std::cerr << "TestAllBenchmarksWithAlgorithms - " << "path: " << path
+                      << ", algorithm: " << algorithm->GetName() << std::endl;
             Block block = BlockParser(data, parser);
             auto benchmark_results = TestAlgorithm(path, std::move(block), *algorithm, iterations);
             SaveBenchmarkResults(benchmark_results);

@@ -146,11 +146,6 @@ std::vector<size_t> GetSuffixArrayGreedyOrder(const std::vector<std::string> &da
         total_string += delimiter;
     }
 
-    // std::cerr << "GetSuffixArrayGreedyOrder - estimated_size: " << estimated_size
-    //           << " delimiter: " << static_cast<int>(delimiter) << " data.size() = " <<
-    //           data.size()
-    //           << std::endl;
-
     assert(total_string.size() == estimated_size);
 
     std::vector<size_t> string_ids;

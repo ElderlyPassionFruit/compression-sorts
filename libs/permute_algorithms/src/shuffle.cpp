@@ -40,8 +40,9 @@ void ShufflePermute::GetPermutation(const Block& block, std::vector<size_t>& ord
         }
         ++iterations;
     }
-    std::cerr << "ShufflePermute: size = " << order.size() << " iterations = " << iterations
-              << " improve_iterations = " << improve_iterations << std::endl;
+    std::cerr << "ShufflePermute::GetPermutation - size: " << order.size()
+              << ", iterations: " << iterations << ", improve_iterations: " << improve_iterations
+              << std::endl;
 }
 
 std::string ShufflePermute::GetName() const {
