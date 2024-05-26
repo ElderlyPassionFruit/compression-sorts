@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <random>
 
 #include "compression_sorts/filesystem.hpp"
 #include "compression_sorts/random.hpp"
@@ -33,7 +32,7 @@ void GenerateTest(CompressionSorts::Path dir, size_t test_size, RawGenerator raw
     for (size_t raw = 0; raw < test_size; ++raw) {
         test[raw] = raw_generator(raw);
     }
-    std::shuffle(test.begin(), test.end(), rnd);
+    std::shuffle(test.begin(), test.end(), GetTwister());
     SaveTest(path, test);
 }
 
