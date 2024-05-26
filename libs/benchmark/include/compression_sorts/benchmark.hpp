@@ -16,4 +16,8 @@ Time CalculateFindPermutationTime(const Block& block, const IPermute& algorithm,
 BenchmarkResults TestAlgorithm(const std::string& test_name, Block block, const IPermute& algorithm,
                                const size_t iterations);
 
+void TestAllBenchmarksWithAlgorithms(Path dir, ColumnParser parser,
+                                     const std::vector<IPermutePtr>& algorithms,
+                                     const size_t iterations);
+
 }  // namespace CompressionSorts

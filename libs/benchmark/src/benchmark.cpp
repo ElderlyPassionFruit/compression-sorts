@@ -1,9 +1,11 @@
 #include "compression_sorts/benchmark.hpp"
 
 #include <cassert>
+#include <iostream>
 
 #include "compression_sorts/lz4.hpp"
 #include "compression_sorts/permutation.hpp"
+#include "compression_sorts/statistics_saver.hpp"
 #include "compression_sorts/test_results.hpp"
 
 namespace CompressionSorts {
@@ -67,6 +69,21 @@ BenchmarkResults TestAlgorithm(const std::string& test_name, Block block, const 
     }
 
     return benchmark_results;
+}
+
+void TestAllBenchmarksWithAlgorithms(Path dir, ColumnParser parser,
+                                     const std::vector<IPermutePtr>& algorithms,
+                                     const size_t iterations) {
+    const auto paths = GetAllFiles(dir);
+    for (const Path& path : paths) {
+        auto data = ReadLines(path);
+        for (const auto& algorithm : algorithms) {
+            std::cerr << "name: " << path << " algorithm: " << algorithm->GetName() << std::endl;
+            Block block = BlockParser(data, parser);
+            auto benchmark_results = TestAlgorithm(path, std::move(block), *algorithm, iterations);
+            SaveBenchmarkResults(benchmark_results);
+        }
+    }
 }
 
 }  // namespace CompressionSorts

@@ -4,6 +4,7 @@ add_library(${target} STATIC
     src/benchmark.cpp
     src/statistics_saver.cpp
     src/test_results.cpp
+    src/tests.cpp
 )
 
 target_include_directories(${target} PUBLIC include
