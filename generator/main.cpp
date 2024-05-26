@@ -1,19 +1,13 @@
-#include <random>
-
 #include "compression_sorts/generator.hpp"
-
-std::mt19937_64 rnd(179);
+#include "compression_sorts/random.hpp"
 
 int main() {
-    using CompressionSorts::BatchesSettings;
+    using namespace CompressionSorts;
 
     // random small integers
     {
         constexpr BatchesSettings batches_settings{.max_batch_size = 1'000'000, .exponent = 1.2};
-        std::uniform_int_distribution<> distribution(-100, 100);
-        auto raw_generator = [&distribution](size_t /*raw*/) -> std::string {
-            return std::to_string(distribution(rnd));
-        };
+        RawGenerator raw_generator = GetIntegersGenerator(-100, 100, 1);
         GenerateTests("tests_data/int/random_small", batches_settings, raw_generator);
     }
 
@@ -21,32 +15,17 @@ int main() {
     {
         constexpr size_t kCntSmallIntegerColumns = 20;
         constexpr size_t kMaxBatchSize = 1'000'000 / kCntSmallIntegerColumns;
-
         constexpr BatchesSettings batches_settings{.max_batch_size = kMaxBatchSize,
                                                    .exponent = 1.2};
-
-        std::uniform_int_distribution<> distribution(-100, 100);
-        auto raw_generator = [&distribution](size_t /*raw*/) -> std::string {
-            std::string buffer;
-            for (size_t i = 0; i < kCntSmallIntegerColumns; ++i) {
-                if (i > 0) {
-                    buffer += ',';
-                }
-                buffer += std::to_string(distribution(rnd));
-            }
-            return buffer;
-        };
+        RawGenerator raw_generator = GetIntegersGenerator(-100, 100, kCntSmallIntegerColumns);
         GenerateTests("tests_data/int/many_random_small", batches_settings, raw_generator);
     }
 
     // random big integers
     {
         constexpr BatchesSettings batches_settings{.max_batch_size = 1'000'000, .exponent = 1.2};
-        std::uniform_int_distribution<int64_t> distribution(std::numeric_limits<int64_t>::min(),
-                                                            std::numeric_limits<int64_t>::max());
-        auto raw_generator = [&distribution](size_t /*raw*/) -> std::string {
-            return std::to_string(distribution(rnd));
-        };
+        RawGenerator raw_generator = GetIntegersGenerator(std::numeric_limits<int64_t>::min(),
+                                                          std::numeric_limits<int64_t>::max(), 1);
         GenerateTests("tests_data/int/random_big", batches_settings, raw_generator);
     }
 

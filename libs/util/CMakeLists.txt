@@ -5,6 +5,7 @@ add_library(${target} STATIC
     src/generator.cpp
     src/lz4.cpp
     src/permutation.cpp
+    src/random.cpp
     src/range.cpp
     src/read_data.cpp
     src/serialize_data.cpp
