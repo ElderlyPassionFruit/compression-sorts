@@ -10,7 +10,7 @@ int main() {
         GenerateTests("tests_data/int/random_small", batches_settings, raw_generator);
     }
 
-    // random integer column tables
+    // random small integers 20 columns
     {
         constexpr size_t kCntSmallIntegerColumns = 20;
         constexpr size_t kMaxBatchSize = 1'000'000 / kCntSmallIntegerColumns;
