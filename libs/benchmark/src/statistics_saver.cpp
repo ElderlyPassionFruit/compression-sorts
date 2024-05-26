@@ -1,6 +1,5 @@
 #include "compression_sorts/statistics_saver.hpp"
 
-#include <filesystem>
 #include <fstream>
 #include <unordered_set>
 
@@ -33,8 +32,6 @@ static const std::string kAlgorithmsScheme =
 class StatisticsSaver {
 public:
     StatisticsSaver() {
-        std::filesystem::create_directory("tests_results");
-
         tests_info_out.open("tests_results/tests_info.csv");
         tests_info_out << kTestsInfoScheme << std::endl;
 
