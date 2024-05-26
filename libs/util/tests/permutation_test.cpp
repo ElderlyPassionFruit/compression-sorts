@@ -4,6 +4,8 @@
 
 #include <random>
 
+#include "compression_sorts/random.hpp"
+
 void CheckIsInverse(const std::vector<size_t>& a, const std::vector<size_t>& inverse_a) {
     auto lhs_id = CompressionSorts::ApplyPermutation(a, inverse_a);
     auto rhs_id = CompressionSorts::ApplyPermutation(inverse_a, a);
@@ -37,11 +39,10 @@ TEST(Permutation, UnitInversePermutation) {
 TEST(Permutation, StressInversePermutation) {
     constexpr size_t kIterations = 1000;
     constexpr size_t kMaxPermutationSize = 100;
-    std::mt19937_64 rnd(179);
     std::uniform_int_distribution<size_t> size_distribution(1, kMaxPermutationSize);
 
     for (size_t i = 0; i < kIterations; ++i) {
-        const size_t n = size_distribution(rnd);
+        const size_t n = size_distribution(CompressionSorts::GetTwister());
 
         const auto p = CompressionSorts::GenRandomPermutation(n);
         const auto inverse_p = CompressionSorts::GetInversePermutation(p);

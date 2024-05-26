@@ -5,12 +5,11 @@
 #include <random>
 
 #include "compression_sorts/filesystem.hpp"
+#include "compression_sorts/random.hpp"
 #include "compression_sorts/read_data.hpp"
 #include "compression_sorts/split.hpp"
 
 namespace CompressionSorts {
-
-std::mt19937_64 rnd(179);
 
 std::vector<size_t> GenerateBatches(BatchesSettings batches_settings) {
     std::vector<size_t> batches;
@@ -72,7 +71,7 @@ void GenerateSplitBatches(CompressionSorts::Path dir, BatchesSettings batches_se
 void GenerateRandomPrefixBatches(CompressionSorts::Path dir, BatchesSettings batches_settings,
                                  CompressionSorts::Path path_in) {
     auto data = CompressionSorts::ReadLines(path_in);
-    std::shuffle(data.begin(), data.end(), rnd);
+    std::shuffle(data.begin(), data.end(), GetTwister());
     auto raw_generator = [&data](size_t raw) -> std::string {
         if (raw >= data.size()) {
             throw std::runtime_error("GenerateRandomPrefixBatches - Too small tests file");

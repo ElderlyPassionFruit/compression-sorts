@@ -3,6 +3,8 @@
 #include <numeric>
 #include <random>
 
+#include "compression_sorts/random.hpp"
+
 namespace CompressionSorts {
 
 bool IsPermutation(const std::vector<size_t>& order) {
@@ -17,9 +19,8 @@ std::vector<size_t> GetIdentityPermutation(size_t n) {
 }
 
 std::vector<size_t> GenRandomPermutation(size_t n) {
-    static std::mt19937_64 rnd(57);
     auto permutation = GetIdentityPermutation(n);
-    std::shuffle(permutation.begin(), permutation.end(), rnd);
+    std::shuffle(permutation.begin(), permutation.end(), GetTwister());
     return permutation;
 }
 

@@ -4,18 +4,17 @@
 #include <random>
 
 #include "compression_sorts/permutation.hpp"
+#include "compression_sorts/random.hpp"
 
 namespace CompressionSorts {
 
 namespace {
 
-std::mt19937_64 rnd(179);
-
 bool TryImprove(const OnlineCompressionCalculatorPtr& online_calculator, std::vector<size_t>& order,
                 size_t score) {
     std::uniform_int_distribution<> distribution(0, order.size() - 1);
-    size_t i = distribution(rnd);
-    size_t j = distribution(rnd);
+    size_t i = distribution(GetTwister());
+    size_t j = distribution(GetTwister());
     online_calculator->Swap(i, j);
     size_t new_score = online_calculator->GetCurrentCompressedSize();
     if (new_score >= score) {
