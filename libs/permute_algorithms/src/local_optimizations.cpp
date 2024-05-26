@@ -1,5 +1,6 @@
 #include "compression_sorts/local_optimizations.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <random>
 
@@ -51,7 +52,9 @@ void LocalOptimizationsPermute::GetPermutation(const Block& block,
 }
 
 std::string LocalOptimizationsPermute::GetName() const {
-    return "local-optimizations-" + std::to_string(budget_.count());
+    const std::string budget =
+        std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(budget_).count());
+    return "local optimizations " + budget + "ms";
 }
 
 }  // namespace CompressionSorts
