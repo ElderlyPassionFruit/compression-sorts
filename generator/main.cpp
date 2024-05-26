@@ -1,4 +1,3 @@
-#include "compression_sorts/batches.hpp"
 #include "compression_sorts/generators.hpp"
 
 int main() {
