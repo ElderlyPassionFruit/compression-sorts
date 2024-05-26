@@ -1,6 +1,5 @@
 #include "compression_sorts/suffix_array.hpp"
 
-// #include <iostream>
 #include <numeric>
 #include <set>
 
