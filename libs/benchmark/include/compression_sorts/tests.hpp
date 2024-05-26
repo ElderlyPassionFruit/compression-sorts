@@ -7,11 +7,11 @@
 namespace CompressionSorts {
 
 template <std::integral T>
-void TestAllSingleIntegersColumnTests(Path dir);
+void TestAllSingleIntegersColumnTests(Path /*dir*/);
 
 template <std::integral T>
-void TestAllManyIntegersColumnsTests(Path dir);
+void TestAllManyIntegersColumnsTests(Path /*dir*/);
 
-void TestViaStrings(Path dir);
+void TestViaStrings(Path /*dir*/);
 
 }  // namespace CompressionSorts

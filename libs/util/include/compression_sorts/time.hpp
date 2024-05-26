@@ -15,7 +15,7 @@ Time MesuareTime(std::function<void()> /*routine*/);
 
 class TimeBudget {
 public:
-    explicit TimeBudget(Time budget);
+    explicit TimeBudget(Time /*budget*/);
 
     Time GetElapsedTime() const;
 

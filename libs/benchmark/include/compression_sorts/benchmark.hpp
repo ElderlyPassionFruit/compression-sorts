@@ -6,18 +6,18 @@
 
 namespace CompressionSorts {
 
-CompressionScore CalculateCompressionScore(const IColumn& column);
+CompressionScore CalculateCompressionScore(const IColumn& /*column*/);
 
-CompressionScore CalculateCompressionScore(const Block& block);
+CompressionScore CalculateCompressionScore(const Block& /*block*/);
 
-Time CalculateFindPermutationTime(const Block& block, const IPermute& algorithm,
-                                  std::vector<size_t>& order);
+Time CalculateFindPermutationTime(const Block& /*block*/, const IPermute& /*algorithm*/,
+                                  std::vector<size_t>& /*order*/);
 
-BenchmarkResults TestAlgorithm(const std::string& test_name, Block block, const IPermute& algorithm,
-                               const size_t iterations);
+BenchmarkResults TestAlgorithm(const std::string& /*test_name*/, Block /*block*/,
+                               const IPermute& /*algorithm*/, const size_t /*iterations*/);
 
-void TestAllBenchmarksWithAlgorithms(Path dir, ColumnParser parser,
-                                     const std::vector<IPermutePtr>& algorithms,
-                                     const size_t iterations);
+void TestAllBenchmarksWithAlgorithms(Path /*dir*/, ColumnParser /*parser*/,
+                                     const std::vector<IPermutePtr>& /*algorithms*/,
+                                     const size_t /*iterations*/);
 
 }  // namespace CompressionSorts

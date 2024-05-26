@@ -25,14 +25,4 @@ T FromString(std::string s) {
     }
 }
 
-template <typename T>
-std::vector<T> ReadData(Path path) {
-    auto lines = ReadLines(path);
-    std::vector<T> data(lines.size());
-    for (size_t i = 0; i < lines.size(); ++i) {
-        data[i] = FromString<T>(std::move(lines[i]));
-    }
-    return data;
-}
-
 }  // namespace CompressionSorts
