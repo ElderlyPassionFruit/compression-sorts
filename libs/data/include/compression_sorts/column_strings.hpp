@@ -16,6 +16,7 @@ public:
     size_t CalculateCompressionSize() const override;
     void ApplyPermutation(const std::vector<size_t>& /*order*/) override;
     size_t CalculateDistinctValuesInRange(const Range& /*range*/) const override;
+    size_t CalculateSerializedSizeInRange(const Range& /*range*/) const override;
     void UpdatePermutation(std::vector<size_t>& /*order*/, const Range& /*range*/,
                            Algorithms /*algorithm*/) const override;
     OnlineCompressionCalculatorPtr GetOnlineCompressionCalculator() const override;
