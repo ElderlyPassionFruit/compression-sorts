@@ -32,4 +32,6 @@ private:
     const size_t size_;
 };
 
+Block BlockParser(const std::vector<std::string>& /*lines*/, ColumnParser /*parser*/);
+
 }  // namespace CompressionSorts

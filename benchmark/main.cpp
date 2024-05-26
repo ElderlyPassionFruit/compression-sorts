@@ -4,15 +4,16 @@
 #include "compression_sorts/benchmark.hpp"
 #include "compression_sorts/block.hpp"
 #include "compression_sorts/column_integers.hpp"
+#include "compression_sorts/column_interface.hpp"
 #include "compression_sorts/column_strings.hpp"
-#include "compression_sorts/get_all_files.hpp"
+#include "compression_sorts/filesystem.hpp"
 #include "compression_sorts/identity.hpp"
 #include "compression_sorts/lexicographic_sort.hpp"
 #include "compression_sorts/local_optimizations.hpp"
 #include "compression_sorts/multiple_lists.hpp"
+#include "compression_sorts/permute_interface.hpp"
 #include "compression_sorts/read_data.hpp"
 #include "compression_sorts/shuffle.hpp"
-#include "compression_sorts/split.hpp"
 #include "compression_sorts/statistics_saver.hpp"
 #include "compression_sorts/suffix_array_greedy.hpp"
 
@@ -20,246 +21,87 @@ using namespace CompressionSorts;
 
 namespace {
 
-struct TestWithName {
-    Block block;
-    std::string name;
-};
-
-using Tests = std::vector<TestWithName>;
-
-template <typename T>
-Block ReadSingleColumnBlock(Path path) {
-    auto data = ReadData<T>(path);
-
-    if constexpr (std::is_integral_v<T>) {
-        ColumnPtr column(std::make_unique<ColumnIntegers<T>>(std::move(data)));
-        Block::Container columns;
-        columns.push_back(std::move(column));
-        Block block(std::move(columns));
-        return block;
-    } else if constexpr (std::is_same_v<std::string, T>) {
-        ColumnPtr column(std::make_unique<ColumnStrings>(std::move(data)));
-        Block::Container columns;
-        columns.push_back(std::move(column));
-        Block block(std::move(columns));
-        return block;
-    } else {
-        throw std::runtime_error("Not implemented");
-    }
-}
-
-template <typename T>
-Tests GetAllSingleColumnTests(Path dir) {
-    auto paths = GetAllFiles(dir);
-    Tests tests;
-    for (const auto& path : paths) {
-        Block block(ReadSingleColumnBlock<T>(path));
-        tests.push_back({
-            .block = std::move(block),
-            .name = path,
-        });
-    }
-    return tests;
-}
-
-std::vector<std::vector<std::string>> Transpose(std::vector<std::vector<std::string>> data) {
-    size_t n = data.size();
-    size_t m = data[0].size();
-    std::vector<std::vector<std::string>> result(m, std::vector<std::string>(n));
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t j = 0; j < m; ++j) {
-            result[j][i] = data[i][j];
-        }
-    }
-    return result;
-}
-
-Tests GetAllFullAsStringsTests(Path dir) {
-    auto paths = GetAllFiles(dir);
-    Tests tests;
-    for (const auto& path : paths) {
-        auto data = ReadData<std::string>(path);
-        auto columns_data = Transpose(SplitAllStrings(data, ','));
-        size_t cnt_columns = columns_data.size();
-        Block::Container columns(cnt_columns);
-        for (size_t i = 0; i < cnt_columns; ++i) {
-            columns[i] = std::make_unique<ColumnStrings>(std::move(columns_data[i]));
-        }
-        Block block(std::move(columns));
-        tests.push_back({
-            .block = std::move(block),
-            .name = path,
-        });
-    }
-    return tests;
-}
-
-template <std::integral T>
-std::vector<T> StringsToIntegers(const std::vector<std::string>& data) {
-    std::vector<T> result(data.size());
-    for (size_t i = 0; i < data.size(); ++i) {
-        result[i] = FromString<T>(data[i]);
-    }
-    return result;
-}
-
-template <std::integral T>
-Tests GetAllFullAsIntegerTests(Path dir) {
-    auto paths = GetAllFiles(dir);
-    Tests tests;
-    for (const auto& path : paths) {
-        auto data = ReadData<std::string>(path);
-        auto columns_data_strings = Transpose(SplitAllStrings(data, ','));
-        std::vector<std::vector<T>> columns_data;
-        for (const auto& column_string : columns_data_strings) {
-            columns_data.push_back(StringsToIntegers<T>(column_string));
-        }
-        size_t cnt_columns = columns_data.size();
-        Block::Container columns(cnt_columns);
-        for (size_t i = 0; i < cnt_columns; ++i) {
-            columns[i] = std::make_unique<ColumnIntegers<T>>(std::move(columns_data[i]));
-        }
-        Block block(std::move(columns));
-        tests.push_back({
-            .block = std::move(block),
-            .name = path,
-        });
-    }
-    return tests;
-}
-
-void TestAllBenchmarksWithAlgorithm(Tests tests, const IPermute& algorithm,
+void TestAllBenchmarksWithAlgorithm(Path dir, ColumnParser parser,
+                                    const std::vector<IPermutePtr>& algorithms,
                                     const size_t iterations) {
-    for (auto& [block, name] : tests) {
-        std::cerr << "name = " << name << " algorithm = " << algorithm.GetName() << std::endl;
-        auto benchmark_results = TestAlgorithm(name, std::move(block), algorithm, iterations);
-        SaveBenchmarkResults(benchmark_results);
+    const auto paths = GetAllFiles(dir);
+    for (const Path& path : paths) {
+        auto data = ReadLines(path);
+        for (const auto& algorithm : algorithms) {
+            std::cerr << "name: " << path << " algorithm: " << algorithm->GetName() << std::endl;
+            Block block = BlockParser(data, parser);
+            auto benchmark_results = TestAlgorithm(path, std::move(block), *algorithm, iterations);
+            SaveBenchmarkResults(benchmark_results);
+        }
     }
 }
 
 template <std::integral T>
 void TestAllSingleIntegersColumnTests(Path dir) {
+    std::vector<IPermutePtr> algorithms;
+
     // Just nothing
-    {
-        auto tests = GetAllSingleColumnTests<T>(dir);
-        CompressionSorts::IdentityPermute identity;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), identity, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::IdentityPermute>());
     // Shuffle with big budget
-    {
-        auto tests = GetAllSingleColumnTests<T>(dir);
-        CompressionSorts::ShufflePermute shuffle(100ms);
-        TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::ShufflePermute>(100ms));
     // LocalOptimizations with big budget
-    {
-        auto tests = GetAllSingleColumnTests<T>(dir);
-        CompressionSorts::LocalOptimizationsPermute local_optimizations(100ms);
-        TestAllBenchmarksWithAlgorithm(std::move(tests), local_optimizations, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::LocalOptimizationsPermute>(100ms));
     // Just sort
-    {
-        auto tests = GetAllSingleColumnTests<T>(dir);
-        CompressionSorts::LexicographicSortPermute sort;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::LexicographicSortPermute>());
+
+    ColumnParser parser(GenericColumnParser<ColumnIntegers<T>>);
+    TestAllBenchmarksWithAlgorithm(dir, parser, algorithms, 1);
 }
 
 template <std::integral T>
 void TestAllMannyIntegersColumnsTests(Path dir) {
+    std::vector<IPermutePtr> algorithms;
+
     // Just nothing
-    {
-        auto tests = GetAllFullAsIntegerTests<T>(dir);
-        CompressionSorts::IdentityPermute identity;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), identity, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::IdentityPermute>());
     // Shuffle with big budget
-    {
-        auto tests = GetAllFullAsIntegerTests<T>(dir);
-        CompressionSorts::ShufflePermute shuffle(100ms);
-        TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::ShufflePermute>(100ms));
     // LocalOptimizations with big budget
-    {
-        auto tests = GetAllFullAsIntegerTests<T>(dir);
-        CompressionSorts::LocalOptimizationsPermute local_optimizations(100ms);
-        TestAllBenchmarksWithAlgorithm(std::move(tests), local_optimizations, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::LocalOptimizationsPermute>(100ms));
     // Just sort
-    {
-        auto tests = GetAllFullAsIntegerTests<T>(dir);
-        CompressionSorts::LexicographicSortPermute sort;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::LexicographicSortPermute>());
     // Offline best order
-    {
-        auto tests = GetAllFullAsIntegerTests<T>(dir);
-        CompressionSorts::LexicographicSortOfflineColumnOrderPermute sort_offline_order;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), sort_offline_order, 1);
-    }
+    algorithms.push_back(
+        std::make_unique<CompressionSorts::LexicographicSortOfflineColumnOrderPermute>());
     // Online best order
-    {
-        auto tests = GetAllFullAsIntegerTests<T>(dir);
-        CompressionSorts::LexicographicSortOnlineColumnOrderPermute sort_online_order;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), sort_online_order, 1);
-    }
+    algorithms.push_back(
+        std::make_unique<CompressionSorts::LexicographicSortOnlineColumnOrderPermute>());
     // Multiple lists
-    {
-        auto tests = GetAllFullAsIntegerTests<T>(dir);
-        CompressionSorts::MultipleListsPermute multiple_lists;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), multiple_lists, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::MultipleListsPermute>());
+
+    ColumnParser parser(GenericColumnParser<ColumnIntegers<T>>);
+    TestAllBenchmarksWithAlgorithm(dir, parser, algorithms, 1);
 }
 
 void TestViaStrings(Path dir) {
+    std::vector<IPermutePtr> algorithms;
+
     // Just nothing
-    {
-        auto tests = GetAllFullAsStringsTests(dir);
-        CompressionSorts::IdentityPermute identity;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), identity, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::IdentityPermute>());
     // Shuffle with big budget
-    {
-        auto tests = GetAllFullAsStringsTests(dir);
-        CompressionSorts::ShufflePermute shuffle(100ms);
-        TestAllBenchmarksWithAlgorithm(std::move(tests), shuffle, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::ShufflePermute>(100ms));
     // LocalOptimizations with big budget
-    {
-        auto tests = GetAllFullAsStringsTests(dir);
-        CompressionSorts::LocalOptimizationsPermute local_optimizations(100ms);
-        TestAllBenchmarksWithAlgorithm(std::move(tests), local_optimizations, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::LocalOptimizationsPermute>(100ms));
     // Just sort
-    {
-        auto tests = GetAllFullAsStringsTests(dir);
-        CompressionSorts::LexicographicSortPermute sort;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), sort, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::LexicographicSortPermute>());
     // Offline best order
-    {
-        auto tests = GetAllFullAsStringsTests(dir);
-        CompressionSorts::LexicographicSortOfflineColumnOrderPermute sort_offline_order;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), sort_offline_order, 1);
-    }
+    algorithms.push_back(
+        std::make_unique<CompressionSorts::LexicographicSortOfflineColumnOrderPermute>());
     // Online best order
-    {
-        auto tests = GetAllFullAsStringsTests(dir);
-        CompressionSorts::LexicographicSortOnlineColumnOrderPermute sort_online_order;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), sort_online_order, 1);
-    }
+    algorithms.push_back(
+        std::make_unique<CompressionSorts::LexicographicSortOnlineColumnOrderPermute>());
     // Suffix array based greedy
-    {
-        auto tests = GetAllFullAsStringsTests(dir);
-        CompressionSorts::SuffixArrayGreedyPermute suffix_array_greedy;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), suffix_array_greedy, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::SuffixArrayGreedyPermute>());
     // Multiple lists
-    {
-        auto tests = GetAllFullAsStringsTests(dir);
-        CompressionSorts::MultipleListsPermute multiple_lists;
-        TestAllBenchmarksWithAlgorithm(std::move(tests), multiple_lists, 1);
-    }
+    algorithms.push_back(std::make_unique<CompressionSorts::MultipleListsPermute>());
+
+    ColumnParser parser(GenericColumnParser<ColumnStrings>);
+    TestAllBenchmarksWithAlgorithm(dir, parser, algorithms, 1);
 }
 
 }  // namespace

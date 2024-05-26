@@ -6,7 +6,8 @@ namespace CompressionSorts {
 
 class ColumnStrings final : public IColumn {
 public:
-    using Container = std::vector<std::string>;
+    using ValueType = std::string;
+    using Container = std::vector<ValueType>;
 
     ColumnStrings(Container data);
     std::string GetTypeName() const override;
