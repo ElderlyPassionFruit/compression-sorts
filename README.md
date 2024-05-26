@@ -1,7 +1,7 @@
 # compression-sorts
 A benchmark stand for testing permute algorithms in terms of optimal data compression
 
-## How To Install (Linux)
+## How To Install (Linux Ubuntu 22.04+)
 
 First of all download repository:
 
@@ -29,7 +29,7 @@ There are two benchmarks in project.
     ./bin/benchmark
     ```
 
-2. You can check how good current clickhouse implementation works (it must supports **allow_experimental_improve_compression_rows_order** setting). 
+2. You can check how good current clickhouse implementation works (it must supports **allow_experimental_optimized_row_order** setting). 
 
     If you want to do this, first of all, install and run clickhouse-server (for example you can use my [PR](https://github.com/ClickHouse/ClickHouse/pull/63578), use [this instruction](https://clickhouse.com/docs/en/development/developer-instruction)).
 
@@ -43,3 +43,11 @@ There are two benchmarks in project.
 Fill free to use [research.ipynb](research.ipynb) jupyter notebook. 
 
 If you just execute both benchmarks and after that execute **Run All**, the program will draw many graphs showing the current efficiency of the algorithms on various tests.
+
+Also you can look at the test results on my hardware, they are in the [research_with_results](https://github.com/ElderlyPassionFruit/compression-sorts/tree/research-with-results) branch, in the notebook **research.ipynb** and in the **tests_results** directory.
+
+Characteristics of my hardware:
+
+* Processor: 8-core Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz
+* RAM: 30GB 
+* OS Version: Ubuntu 22.04.4 LTS
