@@ -67,6 +67,13 @@ size_t ColumnStrings::CalculateDistinctValuesInRange(const Range& range) const {
     return elements.size();
 }
 
+size_t ColumnStrings::CalculateSerializedSizeInRange(const Range& range) const {
+    assert(range.from <= range.to);
+    auto begin = std::ranges::next(data_.begin(), range.from);
+    auto end = std::ranges::next(data_.begin(), range.to);
+    return SerializeData<std::string>({begin, end}).size();
+}
+
 void ColumnStrings::UpdatePermutation(std::vector<size_t>& order, const Range& range,
                                       Algorithms algorithm) const {
     assert(range.from <= range.to);

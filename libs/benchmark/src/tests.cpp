@@ -46,10 +46,10 @@ void TestAllManyIntegersColumnsTests(Path dir) {
     REGISTER_ALGORITHM(LocalOptimizationsPermute, 100ms);
     // Just sort
     REGISTER_ALGORITHM(LexicographicSortPermute);
-    // Offline best order
-    REGISTER_ALGORITHM(LexicographicSortOfflineColumnOrderPermute);
-    // Online best order
-    REGISTER_ALGORITHM(LexicographicSortOnlineColumnOrderPermute);
+    // Offline cardinality order
+    REGISTER_ALGORITHM(LexicographicSortOfflineCardinalityOrderPermute);
+    // Online cardinality order
+    REGISTER_ALGORITHM(LexicographicSortOnlineCardinalityOrderPermute);
     // Multiple lists
     REGISTER_ALGORITHM(MultipleListsPermute);
 
@@ -71,10 +71,14 @@ void TestViaStrings(Path dir) {
     REGISTER_ALGORITHM(LocalOptimizationsPermute, 100ms);
     // Just sort
     REGISTER_ALGORITHM(LexicographicSortPermute);
-    // Offline best order
-    REGISTER_ALGORITHM(LexicographicSortOfflineColumnOrderPermute);
-    // Online best order
-    REGISTER_ALGORITHM(LexicographicSortOnlineColumnOrderPermute);
+    // Offline cardinality order
+    REGISTER_ALGORITHM(LexicographicSortOfflineCardinalityOrderPermute);
+    // Online cardinality order
+    REGISTER_ALGORITHM(LexicographicSortOnlineCardinalityOrderPermute);
+    // Offline size order
+    REGISTER_ALGORITHM(LexicographicSortOfflineSizeOrderPermute);
+    // Online size order
+    REGISTER_ALGORITHM(LexicographicSortOnlineSizeOrderPermute);
     // Suffix array based greedy
     REGISTER_ALGORITHM(SuffixArrayGreedyPermute);
     // Multiple lists
