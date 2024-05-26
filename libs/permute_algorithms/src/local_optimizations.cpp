@@ -1,21 +1,21 @@
 #include "compression_sorts/local_optimizations.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <random>
 
 #include "compression_sorts/permutation.hpp"
+#include "compression_sorts/random.hpp"
 
 namespace CompressionSorts {
 
 namespace {
 
-std::mt19937_64 rnd(179);
-
 bool TryImprove(const OnlineCompressionCalculatorPtr& online_calculator, std::vector<size_t>& order,
                 size_t score) {
     std::uniform_int_distribution<> distribution(0, order.size() - 1);
-    size_t i = distribution(rnd);
-    size_t j = distribution(rnd);
+    size_t i = distribution(GetTwister());
+    size_t j = distribution(GetTwister());
     online_calculator->Swap(i, j);
     size_t new_score = online_calculator->GetCurrentCompressedSize();
     if (new_score >= score) {
@@ -46,13 +46,15 @@ void LocalOptimizationsPermute::GetPermutation(const Block& block,
         }
         ++iterations;
     }
-    std::cerr << "LocalOptimizationsPermute: size = " << order.size()
-              << " iterations = " << iterations << " improve_iterations = " << improve_iterations
+    std::cerr << "LocalOptimizationsPermute::GetPermutation - size: " << order.size()
+              << ", iterations: " << iterations << ", improve_iterations: " << improve_iterations
               << std::endl;
 }
 
 std::string LocalOptimizationsPermute::GetName() const {
-    return "local-optimizations-" + std::to_string(budget_.count());
+    const std::string budget =
+        std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(budget_).count());
+    return "local optimizations " + budget + "ms";
 }
 
 }  // namespace CompressionSorts

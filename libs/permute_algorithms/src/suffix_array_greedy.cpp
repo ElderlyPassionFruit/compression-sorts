@@ -48,7 +48,7 @@ void SuffixArrayGreedyPermute::GetPermutationForColumnOrder(const Block& block,
 }
 
 std::string SuffixArrayGreedyPermute::GetName() const {
-    return "suffix-array-greedy";
+    return "suffix array greedy";
 }
 
 }  // namespace CompressionSorts

@@ -15,7 +15,7 @@ struct CompressionScore {
     Time compression_time_ns = 0ns;
     Time decompression_time_ns = 0ns;
 
-    CompressionScore& operator+=(const CompressionScore& other);
+    CompressionScore& operator+=(const CompressionScore& /*other*/);
 };
 
 struct TestResults {

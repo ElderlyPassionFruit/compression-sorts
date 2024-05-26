@@ -1,9 +1,9 @@
-set(target compression_sorts_data)
+set(target compression_sorts_generator)
 
 add_library(
     ${target} STATIC
-    src/block.cpp
-    src/column_strings.cpp
+    src/batches.cpp
+    src/generators.cpp
 )
 
 target_include_directories(
@@ -15,5 +15,3 @@ target_link_libraries(
     ${target} PUBLIC
     compression_sorts_util
 )
-
-add_subdirectory(tests)

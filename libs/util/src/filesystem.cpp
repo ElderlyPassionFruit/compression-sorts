@@ -1,8 +1,6 @@
-#include "compression_sorts/get_all_files.hpp"
+#include "compression_sorts/filesystem.hpp"
 
-#include <algorithm>
-#include <cctype>
-#include <string>
+#include <fstream>
 
 namespace CompressionSorts {
 
@@ -20,6 +18,19 @@ std::tuple<std::string, size_t, std::string> SplitWithPath(const Path& path) {
 }
 
 }  // namespace
+
+void InitializeDirectory(CompressionSorts::Path dir) {
+    std::filesystem::remove_all(dir);
+    std::filesystem::create_directories(dir);
+}
+
+void SaveTest(CompressionSorts::Path path, const std::vector<std::string>& test) {
+    std::ofstream out(path);
+    out.tie(0);
+    for (const auto& raw : test) {
+        out << raw << "\n";
+    }
+}
 
 std::vector<Path> GetAllFiles(Path dir) {
     std::vector<Path> paths;
