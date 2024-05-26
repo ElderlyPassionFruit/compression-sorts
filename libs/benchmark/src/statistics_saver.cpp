@@ -40,7 +40,7 @@ public:
     }
 
     void SaveBenchmarkResults(BenchmarkResults benchmark_results) {
-        // for test_info
+        // for tests_info
         if (!used_tests.contains(benchmark_results.name)) {
             used_tests.insert(benchmark_results.name);
             const auto& score = benchmark_results.initial_score;
@@ -49,7 +49,7 @@ public:
                            << score.compressed_size << "," << score.compression_time_ns.count()
                            << "," << score.decompression_time_ns.count() << std::endl;
         }
-        // for algorithms
+        // for algorithms_results
         for (const auto& result : benchmark_results.permuted_scores) {
             const auto& score = result.permuted_score;
             algorithms_out << benchmark_results.name << "," << benchmark_results.algorithm_name
