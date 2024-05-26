@@ -25,6 +25,7 @@ struct IColumn {
     virtual size_t CalculateCompressionSize() const = 0;
     virtual void ApplyPermutation(const std::vector<size_t>& /*order*/) = 0;
     virtual size_t CalculateDistinctValuesInRange(const Range& /*range*/) const = 0;
+    virtual size_t CalculateSerializedSizeInRange(const Range& /*range*/) const = 0;
     virtual void UpdatePermutation(std::vector<size_t>& /*order*/, const Range& /*range*/,
                                    Algorithms /*algorithm*/) const = 0;
     virtual EqualRanges GetEqualRanges(const std::vector<size_t>& /*order*/,

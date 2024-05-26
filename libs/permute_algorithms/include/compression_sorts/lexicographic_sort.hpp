@@ -1,6 +1,5 @@
 #pragma once
 
-#include "compression_sorts/range.hpp"
 #include "permute_interface.hpp"
 
 namespace CompressionSorts {
@@ -11,21 +10,28 @@ public:
     std::string GetName() const override;
 };
 
-class LexicographicSortOfflineColumnOrderPermute : public IPermute {
+class LexicographicSortOfflineCardinalityOrderPermute : public IPermute {
 public:
     void GetPermutation(const Block& /*block*/, std::vector<size_t>& /*order*/) const override;
     std::string GetName() const override;
 };
 
-class LexicographicSortOnlineColumnOrderPermute : public IPermute {
+class LexicographicSortOnlineCardinalityOrderPermute : public IPermute {
 public:
     void GetPermutation(const Block& /*block*/, std::vector<size_t>& /*order*/) const override;
     std::string GetName() const override;
+};
 
-private:
-    void GetPermutation(const Block& /*block*/, size_t /*processed_columns*/,
-                        std::vector<size_t> /*columns_order*/, Range /*range*/,
-                        std::vector<size_t>& /*order*/) const;
+class LexicographicSortOfflineSizeOrderPermute : public IPermute {
+public:
+    void GetPermutation(const Block& /*block*/, std::vector<size_t>& /*order*/) const override;
+    std::string GetName() const override;
+};
+
+class LexicographicSortOnlineSizeOrderPermute : public IPermute {
+public:
+    void GetPermutation(const Block& /*block*/, std::vector<size_t>& /*order*/) const override;
+    std::string GetName() const override;
 };
 
 }  // namespace CompressionSorts

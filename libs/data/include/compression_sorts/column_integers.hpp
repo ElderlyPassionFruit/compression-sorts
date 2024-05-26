@@ -48,6 +48,13 @@ public:
         return elements.size();
     }
 
+    size_t CalculateSerializedSizeInRange(const Range& range) const override {
+        assert(range.from <= range.to);
+        auto begin = std::ranges::next(data_.begin(), range.from);
+        auto end = std::ranges::next(data_.begin(), range.to);
+        return SerializeData<T>({begin, end}).size();
+    }
+
     void UpdatePermutation(std::vector<size_t>& order, const Range& range,
                            Algorithms algorithm) const override {
         assert(range.from <= range.to);
