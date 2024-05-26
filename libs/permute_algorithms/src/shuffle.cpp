@@ -40,12 +40,16 @@ void ShufflePermute::GetPermutation(const Block& block, std::vector<size_t>& ord
         }
         ++iterations;
     }
-    std::cerr << "ShufflePermute: size = " << order.size() << " iterations = " << iterations
-              << " improve_iterations = " << improve_iterations << std::endl;
+    std::cerr << "ShufflePermute::GetPermutation - size: " << order.size()
+              << ", iterations: " << iterations << ", improve_iterations: " << improve_iterations
+              << std::endl;
 }
 
 std::string ShufflePermute::GetName() const {
-    return "shuffle-" + std::to_string(budget_.count());
+    const std::string budget =
+        std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(budget_).count());
+
+    return "shuffle " + budget + "ms";
 }
 
 }  // namespace CompressionSorts

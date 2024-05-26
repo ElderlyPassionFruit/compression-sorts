@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -13,5 +14,7 @@ struct IPermute {
 
     virtual ~IPermute() = default;
 };
+
+using IPermutePtr = std::unique_ptr<const IPermute>;
 
 }  // namespace CompressionSorts

@@ -14,7 +14,8 @@ namespace CompressionSorts {
 template <std::integral T>
 class ColumnIntegers : public IColumn {
 public:
-    using Container = std::vector<T>;
+    using ValueType = T;
+    using Container = std::vector<ValueType>;
 
     explicit ColumnIntegers(Container data) : data_(std::move(data)) {
     }

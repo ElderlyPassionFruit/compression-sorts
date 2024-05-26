@@ -2,7 +2,9 @@
 
 #include <cassert>
 
+#include "compression_sorts/column_interface.hpp"
 #include "compression_sorts/online_compression_calculator_interface.hpp"
+#include "compression_sorts/split.hpp"
 
 namespace CompressionSorts {
 
@@ -115,6 +117,31 @@ const Block::Container& Block::GetData() const {
 
 OnlineCompressionCalculatorPtr Block::GetOnlineCompressionCalculator() const {
     return std::make_unique<BlockOnlineCompressionCalculator>(data_);
+}
+
+namespace {
+
+std::vector<std::vector<std::string>> Transpose(std::vector<std::vector<std::string>> data) {
+    size_t n = data.size();
+    size_t m = data[0].size();
+    std::vector<std::vector<std::string>> result(m, std::vector<std::string>(n));
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = 0; j < m; ++j) {
+            result[j][i] = data[i][j];
+        }
+    }
+    return result;
+}
+
+}  // namespace
+
+Block BlockParser(const std::vector<std::string>& lines, ColumnParser parser) {
+    auto columns_data = Transpose(SplitAllStrings(lines, ','));
+    Block::Container columns(columns_data.size());
+    for (size_t i = 0; i < columns.size(); ++i) {
+        columns[i] = parser(columns_data[i]);
+    }
+    return Block(std::move(columns));
 }
 
 }  // namespace CompressionSorts

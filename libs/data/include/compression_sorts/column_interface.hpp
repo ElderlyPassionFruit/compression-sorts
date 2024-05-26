@@ -1,10 +1,12 @@
 #pragma once
 
+#include <functional>
 #include <string>
 #include <vector>
 
 #include "compression_sorts/online_compression_calculator_interface.hpp"
 #include "compression_sorts/range.hpp"
+#include "compression_sorts/read_data.hpp"
 
 namespace CompressionSorts {
 
@@ -36,5 +38,18 @@ struct IColumn {
 };
 
 using ColumnPtr = std::unique_ptr<IColumn>;
+
+template <typename TColumn>
+ColumnPtr GenericColumnParser(const std::vector<std::string>& rows) {
+    using Container = TColumn::Container;
+    using ValueType = TColumn::ValueType;
+    Container data(rows.size());
+    for (size_t i = 0; i < rows.size(); ++i) {
+        data[i] = FromString<ValueType>(rows[i]);
+    }
+    return std::make_unique<TColumn>(std::move(data));
+}
+
+using ColumnParser = std::function<ColumnPtr(const std::vector<std::string>& /*rows*/)>;
 
 }  // namespace CompressionSorts

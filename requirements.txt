@@ -3,6 +3,8 @@ certifi==2024.2.2
 charset-normalizer==3.3.2
 clickhouse-connect==0.7.8
 clickhouse-driver==0.2.7
+cmake-format==0.6.13
+cmakelang==0.6.13
 comm==0.2.2
 contourpy==1.2.1
 cycler==0.12.1
@@ -37,6 +39,7 @@ Pygments==2.17.2
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
 pytz==2024.1
+PyYAML==6.0.1
 pyzmq==26.0.2
 requests==2.31.0
 seaborn==0.13.2
