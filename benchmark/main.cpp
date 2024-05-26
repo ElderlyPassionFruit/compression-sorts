@@ -21,9 +21,9 @@ using namespace CompressionSorts;
 
 namespace {
 
-void TestAllBenchmarksWithAlgorithm(Path dir, ColumnParser parser,
-                                    const std::vector<IPermutePtr>& algorithms,
-                                    const size_t iterations) {
+void TestAllBenchmarksWithAlgorithms(Path dir, ColumnParser parser,
+                                     const std::vector<IPermutePtr>& algorithms,
+                                     const size_t iterations) {
     const auto paths = GetAllFiles(dir);
     for (const Path& path : paths) {
         auto data = ReadLines(path);
@@ -50,7 +50,7 @@ void TestAllSingleIntegersColumnTests(Path dir) {
     algorithms.push_back(std::make_unique<CompressionSorts::LexicographicSortPermute>());
 
     ColumnParser parser(GenericColumnParser<ColumnIntegers<T>>);
-    TestAllBenchmarksWithAlgorithm(dir, parser, algorithms, 1);
+    TestAllBenchmarksWithAlgorithms(dir, parser, algorithms, 1);
 }
 
 template <std::integral T>
@@ -75,7 +75,7 @@ void TestAllMannyIntegersColumnsTests(Path dir) {
     algorithms.push_back(std::make_unique<CompressionSorts::MultipleListsPermute>());
 
     ColumnParser parser(GenericColumnParser<ColumnIntegers<T>>);
-    TestAllBenchmarksWithAlgorithm(dir, parser, algorithms, 1);
+    TestAllBenchmarksWithAlgorithms(dir, parser, algorithms, 1);
 }
 
 void TestViaStrings(Path dir) {
@@ -101,7 +101,7 @@ void TestViaStrings(Path dir) {
     algorithms.push_back(std::make_unique<CompressionSorts::MultipleListsPermute>());
 
     ColumnParser parser(GenericColumnParser<ColumnStrings>);
-    TestAllBenchmarksWithAlgorithm(dir, parser, algorithms, 1);
+    TestAllBenchmarksWithAlgorithms(dir, parser, algorithms, 1);
 }
 
 }  // namespace
